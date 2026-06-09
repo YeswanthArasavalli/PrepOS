@@ -96,7 +96,7 @@ export function getRealityCheck(planHrs: number, studyHrs: number): RealityCheck
 
 export function isExecutionMode(day:number,mockCount:number,doneTopics:number):boolean{return day>=14&&mockCount===0&&doneTopics<3;}
 export function readinessColor(pct:number):string{if(pct>=70)return"#1A8F68";if(pct>=40)return"#B06B0F";return"#C94B2A";}
-export function daysSincePrepStart(prepStart="2026-06-03"):number{return Math.max(1,Math.ceil((Date.now()-new Date(prepStart).getTime())/86400000));}
+export function daysSincePrepStart(prepStart="2026-06-13"):number{return Math.max(0,Math.floor((Date.now()-new Date(prepStart).getTime())/86400000));}
 
 // PATCH 11: Daily Plan Completion
 export function calcDailyCompletion(tasks: { completed: boolean }[]): number {

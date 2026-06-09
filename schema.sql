@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   is_assessed         BOOLEAN DEFAULT FALSE,
   current_day         INTEGER DEFAULT 1,
   freeze_date         DATE DEFAULT '2026-06-02',
-  prep_start_date     DATE DEFAULT '2026-06-03',
+  prep_start_date     DATE DEFAULT '2026-06-13',
   score_quant         SMALLINT DEFAULT 2 CHECK (score_quant BETWEEN 0 AND 9),
   score_reasoning     SMALLINT DEFAULT 2 CHECK (score_reasoning BETWEEN 0 AND 9),
   score_english       SMALLINT DEFAULT 3 CHECK (score_english BETWEEN 0 AND 9),
