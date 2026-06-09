@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { usePrepData } from "../../hooks/usePrepData";
 import { daysSincePrepStart, readinessColor } from "../../lib/formulas";
 import { EXAMS, EXAM_INTEL, TOPICS } from "../../lib/constants";
-import { Train, BookOpen, Trophy, TrendingUp, Clock, CheckCircle, AlertTriangle } from "lucide-react";
+import { Train, BookOpen, Trophy, TrendingUp, Clock, CheckCircle, AlertTriangle, Target } from "lucide-react";
 
 export default function NTPCPage() {
   const { profile } = useAuth();
