@@ -39,8 +39,10 @@ export function usePrepData() {
 
   // ── Profile ────────────────────────────────────────────────
   const updateProfileMutation = useMutation({
-    mutationFn: (data: Record<string, unknown>) =>
-      supabase.from("profiles").update(data).eq("id", uid),
+    mutationFn: async (data: Record<string, unknown>) => {
+      const { error } = await supabase.from("profiles").update(data).eq("id", uid);
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["profile", uid] }),
   });
 
@@ -67,8 +69,10 @@ export function usePrepData() {
   });
 
   const logHealthMutation = useMutation({
-    mutationFn: (input: HealthLogInput) =>
-      supabase.from("health_logs").upsert({ ...input, user_id: uid }, { onConflict: "user_id,log_date" }),
+    mutationFn: async (input: HealthLogInput) => {
+      const { error } = await supabase.from("health_logs").upsert({ ...input, user_id: uid }, { onConflict: "user_id,log_date" });
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["health_logs", uid] }),
   });
   const logHealth = (input: HealthLogInput) => logHealthMutation.mutate(input);
@@ -86,8 +90,10 @@ export function usePrepData() {
   });
 
   const addMockMutation = useMutation({
-    mutationFn: (input: MockScoreInput) =>
-      supabase.from("mock_scores").insert({ ...input, user_id: uid }),
+    mutationFn: async (input: MockScoreInput) => {
+      const { error } = await supabase.from("mock_scores").insert({ ...input, user_id: uid });
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["mock_scores", uid] }),
   });
   const addMock = (input: MockScoreInput) => addMockMutation.mutate(input);
@@ -104,8 +110,10 @@ export function usePrepData() {
   });
 
   const addErrorMutation = useMutation({
-    mutationFn: (input: ErrorLogInput) =>
-      supabase.from("error_logs").insert({ ...input, user_id: uid }),
+    mutationFn: async (input: ErrorLogInput) => {
+      const { error } = await supabase.from("error_logs").insert({ ...input, user_id: uid });
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["error_logs", uid] }),
   });
   const addError = (input: ErrorLogInput) => addErrorMutation.mutate(input);
@@ -123,13 +131,16 @@ export function usePrepData() {
   const topicProgressMap = Object.fromEntries(topicProgressList.map(t => [t.topic_id, t]));
 
   const updateTopicMutation = useMutation({
-    mutationFn: ({ topicId, subject, topicName, isDone, stage }: {
+    mutationFn: async ({ topicId, subject, topicName, isDone, stage }: {
       topicId: string; subject: string; topicName: string; isDone: boolean; stage: PipelineStage;
-    }) => supabase.from("topic_progress").upsert({
-      user_id: uid, topic_id: topicId, topic_name: topicName, subject,
-      is_done: isDone, pipeline_stage: stage,
-      done_at: isDone ? new Date().toISOString() : undefined,
-    }, { onConflict: "user_id,topic_id" }),
+    }) => {
+      const { error } = await supabase.from("topic_progress").upsert({
+        user_id: uid, topic_id: topicId, topic_name: topicName, subject,
+        is_done: isDone, pipeline_stage: stage,
+        done_at: isDone ? new Date().toISOString() : undefined,
+      }, { onConflict: "user_id,topic_id" });
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["topic_progress", uid] }),
   });
   const updateTopic = (args: Parameters<typeof updateTopicMutation.mutate>[0]) => updateTopicMutation.mutate(args);
@@ -207,8 +218,10 @@ export function usePrepData() {
   });
 
   const addWeekLogMutation = useMutation({
-    mutationFn: (input: WeekLogInput) =>
-      supabase.from("week_logs").upsert({ ...input, user_id: uid }, { onConflict: "user_id,week_start" }),
+    mutationFn: async (input: WeekLogInput) => {
+      const { error } = await supabase.from("week_logs").upsert({ ...input, user_id: uid }, { onConflict: "user_id,week_start" });
+      if (error) throw error;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["week_logs", uid] });
       const totalPlan  = weekLogs.reduce((s, w) => s + (w.plan_hours ?? 0), 0);
@@ -229,8 +242,10 @@ export function usePrepData() {
   });
 
   const updateJADMutation = useMutation({
-    mutationFn: (data: Record<string, unknown>) =>
-      supabase.from("jad_progress").upsert({ user_id: uid, ...data }, { onConflict: "user_id" }),
+    mutationFn: async (data: Record<string, unknown>) => {
+      const { error } = await supabase.from("jad_progress").upsert({ user_id: uid, ...data }, { onConflict: "user_id" });
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["jad_progress", uid] }),
   });
   const updateJADProgress = (data: Record<string, unknown>) => updateJADMutation.mutate(data);
@@ -248,11 +263,13 @@ export function usePrepData() {
   const netUnitMap = Object.fromEntries(netUnitList.map(u => [u.unit_number, u.stage]));
 
   const updateNETUnitMutation = useMutation({
-    mutationFn: ({ unit, stage }: { unit: number; stage: 0 | 1 | 2 | 3 }) =>
-      supabase.from("net_unit_progress").upsert(
+    mutationFn: async ({ unit, stage }: { unit: number; stage: 0 | 1 | 2 | 3 }) => {
+      const { error } = await supabase.from("net_unit_progress").upsert(
         { user_id: uid, unit_number: unit, stage },
         { onConflict: "user_id,unit_number" }
-      ),
+      );
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["net_unit_progress", uid] }),
   });
   const updateNETUnit = (unit: number, stage: 0 | 1 | 2 | 3) => updateNETUnitMutation.mutate({ unit, stage });
@@ -269,8 +286,10 @@ export function usePrepData() {
   });
 
   const addStudyLogMutation = useMutation({
-    mutationFn: (input: StudyLogInput) =>
-      supabase.from("study_logs").insert({ ...input, user_id: uid }),
+    mutationFn: async (input: StudyLogInput) => {
+      const { error } = await supabase.from("study_logs").insert({ ...input, user_id: uid });
+      if (error) throw error;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["study_logs", uid] }),
   });
   const addStudyLog = (input: StudyLogInput) => addStudyLogMutation.mutate(input);

@@ -30,7 +30,7 @@ export default function PlannerPage() {
   };
 
   const handleCarryForward = () => {
-    carryForwardUnunfinished(yesterdayStr);
+    carryForwardUnfinished(yesterdayStr);
   };
 
   const getTaskColor = (type: string, priority: number) => {
