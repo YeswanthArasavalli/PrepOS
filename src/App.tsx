@@ -16,6 +16,8 @@ import ResourcesPage     from "./pages/resources/ResourcesPage";
 import WeeklyPage        from "./pages/weekly/WeeklyPage";
 import CalendarPage      from "./pages/calendar/CalendarPage";
 import TimetablePage     from "./pages/timetable/TimetablePage";
+import CGLPage           from "./pages/cgl/CGLPage";
+import NTPCPage          from "./pages/ntpc/NTPCPage";
 import SetupPage         from "./pages/setup/SetupPage";
 
 function FullPageLoader() {
@@ -50,6 +52,8 @@ export default function App() {
         <Route path="mocks"       element={<MocksPage />} />
         <Route path="analytics"   element={<AnalyticsPage />} />
         <Route path="jad"         element={<JADPage />} />
+        <Route path="cgl"         element={<CGLPage />} />
+        <Route path="ntpc"        element={<NTPCPage />} />
         <Route path="planner"     element={<PlannerPage />} />
         <Route path="resources"   element={<ResourcesPage />} />
         <Route path="weekly"      element={<WeeklyPage />} />

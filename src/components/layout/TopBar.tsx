@@ -7,7 +7,7 @@ export default function TopBar() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   
-  const freezeDate = profile?.freeze_date || "2026-06-12";
+  const freezeDate = profile?.freeze_date || "2026-06-02";
   const prepStartDate = profile?.prep_start_date || "2026-06-13";
   const day = daysSincePrepStart(prepStartDate);
   

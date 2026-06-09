@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { LayoutDashboard, Heart, BookOpen, Target, BarChart2, Zap, Settings, LogOut, Calendar, ListTodo, BookMarked, Clock } from "lucide-react";
+import { LayoutDashboard, Heart, BookOpen, Target, BarChart2, Zap, Settings, LogOut, Calendar, ListTodo, BookMarked, Clock, Trophy, Train } from "lucide-react";
 
 const NAV = [
   { to: "/",          icon: LayoutDashboard, label: "Dashboard" },
@@ -9,6 +9,8 @@ const NAV = [
   { to: "/health",    icon: Heart,           label: "Health"    },
   { to: "/study",     icon: BookOpen,        label: "Study"     },
   { to: "/mocks",     icon: Target,          label: "Mocks"     },
+  { to: "/cgl",       icon: Trophy,          label: "CGL Track" },
+  { to: "/ntpc",      icon: Train,           label: "NTPC Track"},
   { to: "/resources", icon: BookMarked,      label: "Resources" },
   { to: "/weekly",    icon: Calendar,        label: "Weekly"    },
   { to: "/analytics", icon: BarChart2,       label: "Analytics" },
