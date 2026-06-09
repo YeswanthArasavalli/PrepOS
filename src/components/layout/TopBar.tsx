@@ -1,29 +1,29 @@
 import { useAuth }     from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Settings } from "lucide-react";
-
-const FREEZE_DATE = "2026-06-02";
-const PREP_START  = "2026-06-03";
-function daysSinceStart() {
-  return Math.max(1, Math.ceil((Date.now() - new Date(PREP_START).getTime()) / 86400000));
-}
+import { daysSincePrepStart } from "../../lib/formulas";
 
 export default function TopBar() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  
+  const freezeDate = profile?.freeze_date || "2026-06-02";
+  const prepStartDate = profile?.prep_start_date || "2026-06-13";
+  const day = daysSincePrepStart(prepStartDate);
+  
   return (
     <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur border-b border-slate-800">
       <div className="bg-slate-900 border-b border-slate-800 px-4 py-1.5 flex items-center justify-between text-xs">
         <div className="flex items-center gap-3">
           <span className="text-slate-500 uppercase tracking-wider">Roadmap Locked</span>
-          <span className="text-slate-300 font-medium">{FREEZE_DATE}</span>
+          <span className="text-slate-300 font-medium">{freezeDate}</span>
           <span className="bg-slate-800 text-slate-400 px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Frozen</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-slate-500 hidden sm:inline">Prep Started</span>
-          <span className="text-slate-300 font-medium hidden sm:inline">{PREP_START}</span>
+          <span className="text-slate-300 font-medium hidden sm:inline">{prepStartDate}</span>
           <span className="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded font-medium">
-            Day {daysSinceStart()} / 140
+            Day {day} / 140
           </span>
         </div>
       </div>
