@@ -9,7 +9,7 @@ export default function TimetablePage() {
   const [newSlot, setNewSlot] = useState({
     time: "08:00",
     activity: "",
-    type: "study" as "study" | "health" | "break" | "mock" | "revision",
+    type: "study" as "study" | "health" | "mock" | "revision" | "recovery",
     duration: 60,
   });
 
@@ -18,26 +18,26 @@ export default function TimetablePage() {
     { time: "05:00", activity: "Wake Up + 300ml Water", type: "health", duration: 15, icon: "🌅" },
     { time: "05:15", activity: "Morning Walk 3km", type: "health", duration: 75, icon: "🏃" },
     { time: "06:30", activity: "Exercise + Strength Training", type: "health", duration: 30, icon: "💪" },
-    { time: "07:00", activity: "Bath + Breakfast + Water", type: "break", duration: 30, icon: "🚿" },
+    { time: "07:00", activity: "Bath + Breakfast + Water", type: "recovery", duration: 30, icon: "🚿" },
     { time: "07:30", activity: "Study Session 1 (Quant/Reasoning)", type: "study", duration: 90, icon: "📚" },
-    { time: "09:00", activity: "Break + Water + Walk", type: "break", duration: 15, icon: "☕" },
+    { time: "09:00", activity: "Break + Water + Walk", type: "recovery", duration: 15, icon: "☕" },
     { time: "09:15", activity: "Study Session 2 (Reasoning/English)", type: "study", duration: 75, icon: "📚" },
     { time: "10:30", activity: "Step Booster Walk", type: "health", duration: 10, icon: "🚶" },
     { time: "10:45", activity: "Study Session 3 (GK/English)", type: "study", duration: 60, icon: "📚" },
-    { time: "11:45", activity: "Lunch + Water", type: "break", duration: 45, icon: "🍽️" },
-    { time: "12:30", activity: "Power Nap", type: "break", duration: 20, icon: "😴" },
+    { time: "11:45", activity: "Lunch + Water", type: "recovery", duration: 45, icon: "🍽️" },
+    { time: "12:30", activity: "Power Nap", type: "recovery", duration: 20, icon: "😴" },
     { time: "13:00", activity: "Study Session 4 (CS Technical)", type: "study", duration: 90, icon: "💻" },
     { time: "14:30", activity: "Error Log + Revision", type: "revision", duration: 30, icon: "📝" },
     { time: "15:00", activity: "Evening Walk + Water", type: "health", duration: 15, icon: "🚶" },
     { time: "15:15", activity: "Study Session 5 (Mock/PYQs)", type: "mock", duration: 60, icon: "📊" },
-    { time: "16:15", activity: "Free Time / Buffer", type: "break", duration: 45, icon: "⏰" },
+    { time: "16:15", activity: "Free Time / Buffer", type: "recovery", duration: 45, icon: "⏰" },
     { time: "17:00", activity: "Revision of Morning Topics", type: "revision", duration: 60, icon: "🔄" },
-    { time: "18:00", activity: "Evening Break", type: "break", duration: 60, icon: "🎧" },
-    { time: "19:00", activity: "Dinner + Water", type: "break", duration: 30, icon: "🍽️" },
+    { time: "18:00", activity: "Evening Break", type: "recovery", duration: 60, icon: "🎧" },
+    { time: "19:00", activity: "Dinner + Water", type: "recovery", duration: 30, icon: "🍽️" },
     { time: "19:30", activity: "Light Revision / Flashcards", type: "revision", duration: 30, icon: "📇" },
-    { time: "20:00", activity: "Plan Tomorrow + Wrap-up", type: "break", duration: 30, icon: "📋" },
-    { time: "20:30", activity: "Free Time / Family", type: "break", duration: 90, icon: "👨‍👩‍👧" },
-    { time: "22:00", activity: "Sleep (7-8 hours)", type: "break", duration: 420, icon: "😴" },
+    { time: "20:00", activity: "Plan Tomorrow + Wrap-up", type: "recovery", duration: 30, icon: "📋" },
+    { time: "20:30", activity: "Free Time / Family", type: "recovery", duration: 90, icon: "👨‍👩‍👧" },
+    { time: "22:00", activity: "Sleep (7-8 hours)", type: "recovery", duration: 420, icon: "😴" },
   ];
 
   const handleAddSlot = () => {
@@ -57,7 +57,7 @@ export default function TimetablePage() {
     switch (type) {
       case "study": return "bg-blue-900/30 border-blue-800 text-blue-300";
       case "health": return "bg-emerald-900/30 border-emerald-800 text-emerald-300";
-      case "break": return "bg-amber-900/30 border-amber-800 text-amber-300";
+      case "recovery": return "bg-amber-900/30 border-amber-800 text-amber-300";
       case "mock": return "bg-purple-900/30 border-purple-800 text-purple-300";
       case "revision": return "bg-orange-900/30 border-orange-800 text-orange-300";
       default: return "bg-slate-800 border-slate-700 text-slate-300";
