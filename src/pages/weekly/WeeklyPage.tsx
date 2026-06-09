@@ -1,12 +1,31 @@
 import { useState } from "react";
 import { useWeeklyTargets } from "../../hooks/useWeeklyTargets";
-import { Target, TrendingUp, Calendar, CheckCircle } from "lucide-react";
+import { Target, TrendingUp, Calendar, CheckCircle, Plus } from "lucide-react";
 
 export default function WeeklyPage() {
-  const { weeklyTargets, isLoading, createWeeklyTarget, currentWeek } =
+  const { weeklyTargets, isLoading, createWeeklyTarget, currentWeek, getCurrentWeekRange } =
     useWeeklyTargets();
 
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const handleCreateCurrentWeek = () => {
+    const range = getCurrentWeekRange();
+    const defaultTargets = [
+      { topic_id: "pct", subject: "Quant", planned_days: 3, completed_days: 0, status: "pending" },
+      { topic_id: "rat", subject: "Quant", planned_days: 2, completed_days: 0, status: "pending" },
+      { topic_id: "avg", subject: "Quant", planned_days: 2, completed_days: 0, status: "pending" },
+    ];
+    createWeeklyTarget({
+      week_start: range.start,
+      week_end: range.end,
+      targets: defaultTargets,
+      study_hours_target: 56,
+      mocks_target: 7,
+      revisions_target: 7,
+      status: "active",
+    });
+    setShowCreateForm(false);
+  };
 
   if (isLoading) {
     return (
@@ -29,22 +48,24 @@ export default function WeeklyPage() {
             Set and track weekly goals
           </p>
         </div>
-        <button
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
-        >
-          <Target size={14} />
-          New Week
-        </button>
+        {!currentWeek && (
+          <button
+            onClick={handleCreateCurrentWeek}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Plus size={14} />
+            Create Week 1
+          </button>
+        )}
       </div>
 
       {/* Current Week Card */}
-      {currentWeek && (
+      {currentWeek ? (
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Calendar size={16} className="text-blue-400" />
-              <span className="text-sm font-medium text-white">Current Week</span>
+              <span className="text-sm font-medium text-white">Week 1 — Preparation Starts June 13</span>
             </div>
             <span
               className={`text-xs px-2 py-1 rounded ${
@@ -106,21 +127,57 @@ export default function WeeklyPage() {
               </div>
             </div>
           )}
+
+          {/* Targets List */}
+          {currentWeek.targets && currentWeek.targets.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-slate-800">
+              <h4 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Week 1 Targets</h4>
+              <div className="space-y-2">
+                {(currentWeek.targets as any[]).map((target, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 text-xs text-slate-300"
+                  >
+                    <CheckCircle size={10} className={target.completed_days > 0 ? "text-emerald-400" : "text-slate-600"} />
+                    <span className="flex-1">{target.subject}: {target.topic_id.toUpperCase()}</span>
+                    <span className="text-slate-500">
+                      {target.completed_days}/{target.planned_days} days
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center">
+          <Calendar size={48} className="mx-auto mb-4 text-slate-600" />
+          <h3 className="text-lg font-medium text-white mb-2">No Week Created Yet</h3>
+          <p className="text-sm text-slate-400 mb-4">
+            Your preparation starts on June 13, 2026. Create your first week to begin tracking.
+          </p>
+          <button
+            onClick={handleCreateCurrentWeek}
+            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+          >
+            <Plus size={16} />
+            Create Week 1 (June 13-19)
+          </button>
         </div>
       )}
 
       {/* Weekly Targets List */}
       <div>
         <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-2">
-          Recent Weeks
+          Previous Weeks
         </h3>
-        {weeklyTargets.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 text-sm">
-            No weekly targets yet. Create your first week above.
+        {weeklyTargets.filter(w => w.id !== currentWeek?.id).length === 0 ? (
+          <div className="text-center py-4 text-slate-500 text-sm">
+            {currentWeek ? "No previous weeks yet" : "Create your first week to get started"}
           </div>
         ) : (
           <div className="space-y-2">
-            {weeklyTargets.map((week) => (
+            {weeklyTargets.filter(w => w.id !== currentWeek?.id).map((week) => (
               <div
                 key={week.id}
                 className="bg-slate-900 border border-slate-800 rounded-xl p-4"

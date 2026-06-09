@@ -15,9 +15,12 @@ export interface WeeklyTarget {
 }
 
 export function useWeeklyTargets() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const qc = useQueryClient();
   const uid = user?.id ?? "";
+
+  // Prep start date: June 13, 2026
+  const PREP_START_DATE = profile?.prep_start_date || "2026-06-13";
 
   const { data: weeklyTargets = [], isLoading } = useQuery({
     queryKey: ["weekly_targets", uid],
@@ -33,7 +36,24 @@ export function useWeeklyTargets() {
   });
 
   const getCurrentWeekRange = () => {
+    const prepStart = new Date(PREP_START_DATE);
     const now = new Date();
+    
+    // If before prep start, use prep start week
+    if (now < prepStart) {
+      const monday = new Date(prepStart);
+      const dayOfWeek = monday.getDay();
+      const diff = monday.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+      const start = new Date(monday.setDate(diff));
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      return {
+        start: start.toISOString().split("T")[0],
+        end: end.toISOString().split("T")[0],
+      };
+    }
+    
+    // Use current week
     const dayOfWeek = now.getDay();
     const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
     const monday = new Date(now.setDate(diff));
@@ -79,34 +99,12 @@ export function useWeeklyTargets() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["weekly_targets", uid] }),
   });
 
-  const getOrCreateCurrentWeek = () => {
-    const currentWeek = weeklyTargets.find((t) => {
-      const now = new Date();
-      const start = new Date(t.week_start);
-      const end = new Date(t.week_end);
-      return now >= start && now <= end;
-    });
-
-    if (!currentWeek) {
-      const range = getCurrentWeekRange();
-      const defaultTargets = [
-        { topic_id: "pct", subject: "Quant", planned_days: 3, completed_days: 0, status: "pending" },
-        { topic_id: "rat", subject: "Quant", planned_days: 2, completed_days: 0, status: "pending" },
-        { topic_id: "avg", subject: "Quant", planned_days: 2, completed_days: 0, status: "pending" },
-      ];
-      createWeeklyTargetMutation.mutate({
-        week_start: range.start,
-        week_end: range.end,
-        targets: defaultTargets,
-        study_hours_target: 56,
-        mocks_target: 7,
-        revisions_target: 7,
-        status: "active",
-      });
-    }
-
-    return currentWeek;
-  };
+  const currentWeek = weeklyTargets.find((t) => {
+    const now = new Date();
+    const start = new Date(t.week_start);
+    const end = new Date(t.week_end);
+    return now >= start && now <= end;
+  });
 
   return {
     weeklyTargets,
@@ -117,7 +115,7 @@ export function useWeeklyTargets() {
       updateWeeklyTargetMutation.mutate({ id, updates }),
     calculateSuccess: (weekStart: string) =>
       calculateSuccessMutation.mutate(weekStart),
-    getOrCreateCurrentWeek,
-    currentWeek: getOrCreateCurrentWeek(),
+    getCurrentWeekRange,
+    currentWeek,
   };
 }
