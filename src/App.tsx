@@ -15,6 +15,7 @@ import PlannerPage       from "./pages/planner/PlannerPage";
 import ResourcesPage     from "./pages/resources/ResourcesPage";
 import WeeklyPage        from "./pages/weekly/WeeklyPage";
 import CalendarPage      from "./pages/calendar/CalendarPage";
+import TimetablePage     from "./pages/timetable/TimetablePage";
 import SetupPage         from "./pages/setup/SetupPage";
 
 function FullPageLoader() {
@@ -53,6 +54,7 @@ export default function App() {
         <Route path="resources"   element={<ResourcesPage />} />
         <Route path="weekly"      element={<WeeklyPage />} />
         <Route path="calendar"    element={<CalendarPage />} />
+        <Route path="timetable"   element={<TimetablePage />} />
         <Route path="settings"    element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
