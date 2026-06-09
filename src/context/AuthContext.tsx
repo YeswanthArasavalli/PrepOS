@@ -47,7 +47,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .select("*")
       .eq("id", userId)
       .single();
-    if (data) setProfile(data as UserProfile);
+    if (data) {
+      const profileData = data as UserProfile;
+      // Auto-fix incorrect dates
+      if (profileData.prep_start_date === '2026-06-03') {
+        await supabase
+          .from("profiles")
+          .update({ prep_start_date: '2026-06-13' })
+          .eq("id", userId);
+        profileData.prep_start_date = '2026-06-13';
+      }
+      setProfile(profileData);
+    }
   };
 
   useEffect(() => {
