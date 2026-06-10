@@ -26,14 +26,35 @@ export default function HealthPage() {
   const cnt     = (k: string, thr=0.9) => recent7.filter((d:any) => (d[k]||0)>=thr).length;
 
   const handleLog = () => {
-    logHealth({log_date:format(new Date(),"yyyy-MM-dd"),...form} as any);
+    const logData: any = {
+      log_date: format(new Date(), "yyyy-MM-dd"),
+      wake_time: form.wake_time,
+      sleep_time: form.sleep_time,
+      sleep_hours: form.sleep_hours,
+      water_liters: form.water_liters,
+      steps: form.steps,
+      exercise_minutes: form.exercise_minutes,
+      strength_minutes: form.strength_minutes,
+      mental_health_score: form.mental_health_score,
+    };
+    logHealth(logData);
     setShowForm(false);
     setForm({wake_time:"05:00",sleep_time:"21:30",sleep_hours:7,water_liters:3,steps:10000,exercise_minutes:30,strength_minutes:20,mental_health_score:8});
   };
 
   const handleUpdate = () => {
     if(!editingId) return;
-    updateHealth(editingId, form);
+    const logData: any = {
+      wake_time: form.wake_time,
+      sleep_time: form.sleep_time,
+      sleep_hours: form.sleep_hours,
+      water_liters: form.water_liters,
+      steps: form.steps,
+      exercise_minutes: form.exercise_minutes,
+      strength_minutes: form.strength_minutes,
+      mental_health_score: form.mental_health_score,
+    };
+    updateHealth(editingId, logData);
     setEditingId(null);
     setShowForm(false);
   };
