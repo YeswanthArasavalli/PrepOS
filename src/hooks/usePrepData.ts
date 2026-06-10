@@ -48,6 +48,15 @@ export function usePrepData() {
   const uid = user?.id ?? "";
 
   // ── Profile ────────────────────────────────────────────────
+  const { data: profile } = useQuery({
+    queryKey: ["profile", uid],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("id", uid).single();
+      return data;
+    },
+    enabled: !!uid,
+  });
+
   const updateProfileMutation = useMutation({
     mutationFn: async (data: Record<string, unknown>) => {
       const { error } = await supabase.from("profiles").update(data).eq("id", uid);
