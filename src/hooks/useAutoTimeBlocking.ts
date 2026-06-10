@@ -71,7 +71,7 @@ export function useAutoTimeBlocking() {
     blocks.push({ time: "21:30", activity: "Sleep", duration: "8 hours", type: "health" });
     
     // Add revision blocks if there are pending revisions
-    const overdueRevisions = revisionLog?.filter(r => new Date(r.due_at) < new Date()) || [];
+    const overdueRevisions = (revisionLog || []).filter(r => new Date(r.due_at) < new Date());
     if (overdueRevisions.length > 0) {
       // Insert revision block after lunch for overdue topics
       blocks.splice(5, 0, {

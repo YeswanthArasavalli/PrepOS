@@ -190,7 +190,7 @@ export default function UltimateDashboard() {
           </div>
         </div>
         <div className="grid grid-cols-6 gap-2 mb-4">
-          {health.breakdown.map((item: any, i) => (
+          {(health.breakdown || []).map((item: any, i) => (
             <div key={i} className="text-center">
               <div className="text-lg font-bold" style={{ color: item.value >= 80 ? '#1A8F68' : item.value >= 50 ? '#B06B0F' : '#C94B2A' }}>
                 {item.value}%
@@ -201,7 +201,7 @@ export default function UltimateDashboard() {
           ))}
         </div>
         <div className="flex gap-2 overflow-x-auto">
-          {antilazy.streaks.map((streak: any) => (
+          {(antilazy.streaks || []).map((streak: any) => (
             <div key={streak.type} className="flex-shrink-0 text-center px-3 py-2 bg-slate-800 rounded-lg">
               <div className="text-xl mb-1">{streak.icon}</div>
               <div className={`text-lg font-bold ${
@@ -227,7 +227,7 @@ export default function UltimateDashboard() {
           <span className="text-xs text-slate-400">Auto-generated</span>
         </div>
         <div className="space-y-2">
-          {timetable.blocks.slice(0, 6).map((block: any, i) => (
+          {(timetable.blocks || []).slice(0, 6).map((block: any, i) => (
             <div key={i} className="flex items-center gap-3 p-2 bg-slate-800 rounded-lg">
               <div className="text-xs text-slate-400 w-16 flex-shrink-0">{block.time}</div>
               <div className={`w-1 h-8 rounded-full ${
@@ -241,7 +241,7 @@ export default function UltimateDashboard() {
               </div>
             </div>
           ))}
-          {timetable.blocks.length > 6 && (
+          {timetable.blocks && timetable.blocks.length > 6 && (
             <div className="text-center text-xs text-slate-500 mt-2">
               +{timetable.blocks.length - 6} more blocks
             </div>
@@ -257,11 +257,11 @@ export default function UltimateDashboard() {
             Subject Allocation
           </h3>
           <span className="text-xs text-slate-400">
-            {routing.weakSubjects.length} weak subjects
+            {(routing.weakSubjects || []).length} weak subjects
           </span>
         </div>
         <div className="space-y-3">
-          {routing.allocations.map((alloc: any) => (
+          {(routing.allocations || []).map((alloc: any) => (
             <div key={alloc.subject}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-slate-300">{alloc.subject}</span>
