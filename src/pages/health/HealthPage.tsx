@@ -26,7 +26,7 @@ export default function HealthPage() {
   const cnt     = (k: string, thr=0.9) => recent7.filter((d:any) => (d[k]||0)>=thr).length;
 
   const handleLog = () => {
-    logHealth({...form, log_date:format(new Date(),"yyyy-MM-dd")} as HealthLogInput);
+    logHealth({...form, log_date:format(new Date(),"yyyy-MM-dd")} as any);
     setShowForm(false);
     setForm({wake_time:"05:00",sleep_time:"21:30",sleep_hours:7,water_liters:3,steps:10000,exercise_minutes:30,strength_minutes:20,mental_health_score:8});
   };

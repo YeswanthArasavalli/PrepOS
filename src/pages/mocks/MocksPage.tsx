@@ -14,7 +14,7 @@ export default function MocksPage() {
 
   const handleAdd = () => {
     if(!form.score||!form.total) return;
-    addMock({exam_id:form.exam,test_date:format(new Date(),"yyyy-MM-dd"),score:+form.score,total:+form.total,notes:form.notes||undefined} as MockScoreInput);
+    addMock({exam_id:form.exam,test_date:format(new Date(),"yyyy-MM-dd"),score:+form.score,total:+form.total,notes:form.notes||undefined} as any);
     setShowForm(false); 
     setForm({exam:"cgl",score:"",total:"",notes:""});
   };
@@ -27,7 +27,7 @@ export default function MocksPage() {
 
   const handleUpdate = () => {
     if(!editingId||!form.score||!form.total) return;
-    updateMock(editingId, {exam_id:form.exam,score:+form.score,total:+form.total,notes:form.notes||undefined});
+    updateMock(editingId, {exam_id:form.exam,score:+form.score,total:+form.total,notes:form.notes||undefined} as any);
     setEditingId(null);
     setShowForm(false);
     setForm({exam:"cgl",score:"",total:"",notes:""});

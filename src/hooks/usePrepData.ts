@@ -20,7 +20,8 @@ export interface HealthLogInput {
   exercise_minutes?: number;
   strength_minutes?: number;
   mental_health_score?: number;
-  wake?: number; sleep?: number; water?: number; exercise?: number; steps?: number; strength?: number;
+  // Legacy fields for backward compatibility
+  wake?: number; sleep?: number; water?: number; exercise?: number; strength?: number;
   notes?: string;
 }
 export interface MockScoreInput {
@@ -358,7 +359,7 @@ export function usePrepData() {
     enabled: !!uid, staleTime: 5 * 60 * 1000,
   });
 
-return {
+  return {
     profile, updateProfile, updateAssessment, updateDay,
     healthLogs, logHealth, updateHealth, deleteHealth, isLoggingHealth,
     mockScores, addMock, updateMock, deleteMock,
