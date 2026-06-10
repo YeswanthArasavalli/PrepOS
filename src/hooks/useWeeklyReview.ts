@@ -119,16 +119,16 @@ export function useWeeklyReview() {
     const hoursStudied = currentWeek.total_study_hours || 0;
 
     // Calculate questions solved (from error logs - each log represents practice session)
-    const questionsSolved = errorLogs?.length * 20 || 0; // Estimate 20 questions per session
+    const questionsSolved = (errorLogs?.length || 0) * 20; // Estimate 20 questions per session
 
     // Calculate PYQs solved
-    const pyqsSolved = errorLogs?.filter(e => e.is_pyq).length * 20 || 0;
+    const pyqsSolved = (errorLogs?.filter(e => e.is_pyq).length || 0) * 20;
 
     // Mocks taken
     const mocksTaken = mockScores?.length || 0;
 
     // Health score (average of last 7 days)
-    const healthScore = healthLogs.length > 0
+    const healthScore = healthLogs && healthLogs.length > 0
       ? Math.round(healthLogs.reduce((acc, log) => {
           const sleepScore = (log.sleep_hours || 0) >= 7 ? 20 : (log.sleep_hours || 0) * 2.86;
           const exerciseScore = (log.exercise_minutes || 0) >= 30 ? 20 : (log.exercise_minutes || 0) * 0.67;

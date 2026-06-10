@@ -75,7 +75,7 @@ export default function UltimateDashboard() {
             <Target size={16} className="text-emerald-400" />
             Today's Top Tasks
           </h3>
-          {revision.hasOverdueRevisions && (
+          {revision.needsAttention && (
             <span className="text-xs px-2 py-1 bg-red-900/50 text-red-400 rounded flex items-center gap-1">
               <AlertTriangle size={10} />
               {revision.overdue.length} Overdue

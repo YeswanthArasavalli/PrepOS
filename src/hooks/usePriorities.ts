@@ -266,7 +266,7 @@ export function usePriorities() {
     hasOverdueRevisions: revisionLog?.some(r => new Date(r.due_at) < new Date()) || false,
     weakSubjects: errorLogs ? 
       Object.entries(
-        errorLogs.reduce((acc, log) => {
+        errorLogs.reduce((acc: Record<string, number>, log) => {
           acc[log.subject] = (acc[log.subject] || 0) + 1;
           return acc;
         }, {} as Record<string, number>)
