@@ -11,8 +11,17 @@ export type EventId =
   | "net_qual" | "net_fail" | "jad_clear" | "jad_post";
 
 export interface HealthLogInput {
-  log_date: string; wake: number; sleep: number;
-  water: number; exercise: number; steps: number; strength: number; notes?: string;
+  log_date: string;
+  wake_time?: string;
+  sleep_time?: string;
+  sleep_hours?: number;
+  water_liters?: number;
+  steps?: number;
+  exercise_minutes?: number;
+  strength_minutes?: number;
+  mental_health_score?: number;
+  wake?: number; sleep?: number; water?: number; exercise?: number; steps?: number; strength?: number;
+  notes?: string;
 }
 export interface MockScoreInput {
   exam_id: ExamId; test_date: string; score: number; total: number;
@@ -78,6 +87,24 @@ export function usePrepData() {
   const logHealth = (input: HealthLogInput) => logHealthMutation.mutate(input);
   const isLoggingHealth = logHealthMutation.isPending;
 
+  const updateHealthMutation = useMutation({
+    mutationFn: async ({id, data}: {id: string; data: HealthLogInput}) => {
+      const { error } = await supabase.from("health_logs").update(data).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["health_logs", uid] }),
+  });
+  const updateHealth = (id: string, data: HealthLogInput) => updateHealthMutation.mutate({id, data});
+
+  const deleteHealthMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("health_logs").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["health_logs", uid] }),
+  });
+  const deleteHealth = (id: string) => deleteHealthMutation.mutate(id);
+
   // ── Mock Scores ────────────────────────────────────────────
   const { data: mockScores = [] } = useQuery({
     queryKey: ["mock_scores", uid],
@@ -97,6 +124,24 @@ export function usePrepData() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["mock_scores", uid] }),
   });
   const addMock = (input: MockScoreInput) => addMockMutation.mutate(input);
+
+  const updateMockMutation = useMutation({
+    mutationFn: async ({id, data}: {id: string; data: MockScoreInput}) => {
+      const { error } = await supabase.from("mock_scores").update(data).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["mock_scores", uid] }),
+  });
+  const updateMock = (id: string, data: MockScoreInput) => updateMockMutation.mutate({id, data});
+
+  const deleteMockMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("mock_scores").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["mock_scores", uid] }),
+  });
+  const deleteMock = (id: string) => deleteMockMutation.mutate(id);
 
   // ── Error Logs ─────────────────────────────────────────────
   const { data: errorLogs = [] } = useQuery({
@@ -313,11 +358,10 @@ export function usePrepData() {
     enabled: !!uid, staleTime: 5 * 60 * 1000,
   });
 
-  return {
-    updateAssessment, updateDay, updateProfile,
-    healthLogs, logHealth, isLoggingHealth,
-    studyLogs, addStudyLog,
-    mockScores, addMock,
+return {
+    profile, updateProfile, updateAssessment, updateDay,
+    healthLogs, logHealth, updateHealth, deleteHealth, isLoggingHealth,
+    mockScores, addMock, updateMock, deleteMock,
     errorLogs, addError,
     topicProgressMap, updateTopic,
     revisionMap, overdueRevisions, upcomingRevisions, markRevised,
