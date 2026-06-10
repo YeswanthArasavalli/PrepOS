@@ -7,7 +7,7 @@ import { useHealthV2 } from "../../hooks/useHealthV2";
 import { usePriorities } from "../../hooks/usePriorities";
 import { useRevisionCommand } from "../../hooks/useRevisionCommand";
 import { useAutoTimeBlocking } from "../../hooks/useAutoTimeBlocking";
-import { Trophy, TrendingUp, AlertTriangle, Target, Clock, CheckCircle, Zap, Activity, Calendar, BookOpen } from "lucide-react";
+import { Trophy, TrendingUp, AlertTriangle, Target, Clock, CheckCircle, Zap, Activity, Calendar } from "lucide-react";
 
 export default function UltimateDashboard() {
   const readiness = useReadinessEngine();
@@ -22,7 +22,7 @@ export default function UltimateDashboard() {
 
   return (
     <div className="space-y-4">
-      {/* Header - Minimal */}
+      {/* Header */}
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-xl p-4">
         <div className="flex items-center justify-between">
           <div>
@@ -68,7 +68,7 @@ export default function UltimateDashboard() {
         </div>
       )}
 
-      {/* GAP 1: Today's Top Tasks (EXECUTION FIRST) */}
+      {/* 1. Today's Top Tasks */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
@@ -86,7 +86,7 @@ export default function UltimateDashboard() {
           <div className="mb-3 p-3 bg-red-950/30 border border-red-900 rounded-lg">
             <p className="text-xs text-red-400 font-medium">⚠️ Revision Priority Rule</p>
             <p className="text-[10px] text-red-300 mt-0.5">
-              Overdue Revision > Weak Topic > New Topic. Complete these before starting anything new.
+              Overdue Revision {'>'} Weak Topic {'>'} New Topic
             </p>
           </div>
         )}
@@ -103,18 +103,15 @@ export default function UltimateDashboard() {
               <div className="flex-1">
                 <div className="text-sm text-white font-medium">{task.title}</div>
                 <div className="text-[10px] text-slate-400 mt-0.5">{task.reason}</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">
-                  Priority Score: {task.priorityScore?.toFixed(1) || 'N/A'} 
-                  {task.priorityScore && (
-                    <span className="ml-2">
-                      (Weak {task.priorityComponents?.weakness}% + Rev {task.priorityComponents?.revision}% + Exam {task.priorityComponents?.exam}% + Mock {task.priorityComponents?.mock}%)
-                    </span>
-                  )}
-                </div>
+                {task.priorityScore && (
+                  <div className="text-[10px] text-slate-500 mt-0.5">
+                    Score: {task.priorityScore.toFixed(1)} (W{task.priorityComponents?.weakness}/R{task.priorityComponents?.revision}/E{task.priorityComponents?.exam}/M{task.priorityComponents?.mock})
+                  </div>
+                )}
               </div>
               <div className="text-right">
                 <div className="text-xs text-slate-500">{task.estimatedMinutes}m</div>
-                <div className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 mt-1">
+                <div className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 mt-1 capitalize">
                   {task.type}
                 </div>
               </div>
@@ -123,7 +120,7 @@ export default function UltimateDashboard() {
         </div>
       </div>
 
-      {/* GAP 2: Revision Due Today */}
+      {/* 2. Revision Due */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
@@ -149,7 +146,7 @@ export default function UltimateDashboard() {
           </div>
         ) : revision.dueToday.length > 0 ? (
           <div className="space-y-2">
-            {revision.dueToday.slice(0, 3).map((rev, i) => (
+            {revision.dueToday.slice(0, 3).map((rev: any, i) => (
               <div key={i} className="flex items-center gap-3 p-2 bg-slate-800 rounded-lg">
                 <div className="w-6 h-6 rounded-full bg-emerald-900 text-emerald-400 flex items-center justify-center text-xs font-bold">
                   {i + 1}
@@ -180,20 +177,20 @@ export default function UltimateDashboard() {
         </div>
       </div>
 
-      {/* GAP 3: Health Status */}
+      {/* 3. Health V2 + Streaks */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
             <Activity size={16} className="text-emerald-400" />
-            Health V2 Status
+            Health V2 + Streaks
           </h3>
           <div className="text-right">
             <div className="text-lg font-bold text-emerald-400">{health.weekly}%</div>
             <div className="text-[10px] text-slate-500">Weekly Avg</div>
           </div>
         </div>
-        <div className="grid grid-cols-6 gap-2">
-          {health.breakdown.map((item, i) => (
+        <div className="grid grid-cols-6 gap-2 mb-4">
+          {health.breakdown.map((item: any, i) => (
             <div key={i} className="text-center">
               <div className="text-lg font-bold" style={{ color: item.value >= 80 ? '#1A8F68' : item.value >= 50 ? '#B06B0F' : '#C94B2A' }}>
                 {item.value}%
@@ -203,24 +200,24 @@ export default function UltimateDashboard() {
             </div>
           ))}
         </div>
-        <div className="mt-3 flex gap-2 overflow-x-auto">
-          {antilazy.streaks.map(streak => (
-            <div key={streak.type} className="flex-shrink-0 text-center px-2 py-1.5 bg-slate-800 rounded-lg">
-              <div className="text-sm mb-0.5">{streak.icon}</div>
-              <div className={`text-base font-bold ${
+        <div className="flex gap-2 overflow-x-auto">
+          {antilazy.streaks.map((streak: any) => (
+            <div key={streak.type} className="flex-shrink-0 text-center px-3 py-2 bg-slate-800 rounded-lg">
+              <div className="text-xl mb-1">{streak.icon}</div>
+              <div className={`text-lg font-bold ${
                 streak.current >= 7 ? 'text-emerald-400' :
                 streak.current >= 3 ? 'text-amber-400' :
                 streak.current > 0 ? 'text-blue-400' : 'text-slate-600'
               }`}>
                 {streak.current}
               </div>
-              <div className="text-[8px] text-slate-500">{streak.label}</div>
+              <div className="text-[9px] text-slate-500">{streak.label}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* GAP 4: Today's Timetable (Auto-Generated) */}
+      {/* 4. Today's Timetable */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
@@ -230,7 +227,7 @@ export default function UltimateDashboard() {
           <span className="text-xs text-slate-400">Auto-generated</span>
         </div>
         <div className="space-y-2">
-          {timetable.blocks.slice(0, 6).map((block, i) => (
+          {timetable.blocks.slice(0, 6).map((block: any, i) => (
             <div key={i} className="flex items-center gap-3 p-2 bg-slate-800 rounded-lg">
               <div className="text-xs text-slate-400 w-16 flex-shrink-0">{block.time}</div>
               <div className={`w-1 h-8 rounded-full ${
@@ -246,13 +243,13 @@ export default function UltimateDashboard() {
           ))}
           {timetable.blocks.length > 6 && (
             <div className="text-center text-xs text-slate-500 mt-2">
-              +{timetable.blocks.length - 6} more blocks (full timetable)
+              +{timetable.blocks.length - 6} more blocks
             </div>
           )}
         </div>
       </div>
 
-      {/* GAP 5: Today's Allocation */}
+      {/* 5. Subject Allocation */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
@@ -264,7 +261,7 @@ export default function UltimateDashboard() {
           </span>
         </div>
         <div className="space-y-3">
-          {routing.allocations.map(alloc => (
+          {routing.allocations.map((alloc: any) => (
             <div key={alloc.subject}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-slate-300">{alloc.subject}</span>
@@ -289,10 +286,10 @@ export default function UltimateDashboard() {
         </div>
       </div>
 
-      {/* GAP 6: Weekly Progress */}
+      {/* 6. Weekly Progress */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <h3 className="text-sm font-medium text-white mb-3">Weekly Progress</h3>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="p-3 bg-slate-800 rounded-lg text-center">
             <div className="text-lg font-bold text-emerald-400">{execution.weeklyScore}</div>
             <div className="text-[10px] text-slate-500">Execution Score</div>
@@ -302,7 +299,7 @@ export default function UltimateDashboard() {
             <div className="text-[10px] text-slate-500">Health Avg</div>
           </div>
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+        <div className="grid grid-cols-3 gap-2 text-center">
           <div className="p-2 bg-slate-800 rounded-lg">
             <div className="text-sm font-bold text-white">{execution.studyHours}h</div>
             <div className="text-[9px] text-slate-500">Study</div>
@@ -318,7 +315,7 @@ export default function UltimateDashboard() {
         </div>
       </div>
 
-      {/* GAP 7: Readiness (Last - Analytics) */}
+      {/* 7. Exam Readiness */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white">Exam Readiness</h3>
@@ -339,141 +336,12 @@ export default function UltimateDashboard() {
         </div>
       </div>
 
-      {/* Event Triggers */}
-      {events.hasActiveEvents && (
-        {[
-          { label: "SSC CGL", value: readiness.readiness.cgl, color: "text-red-400" },
-          { label: "Coal India", value: readiness.readiness.coal, color: "text-amber-400" },
-          { label: "UGC NET", value: readiness.readiness.net, color: "text-purple-400" },
-          { label: "UPSC JAD", value: readiness.readiness.jad, color: "text-violet-400" },
-        ].map(exam => (
-          <div key={exam.label} className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
-            <div className={`text-2xl font-bold ${exam.color}`}>{exam.value}%</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">{exam.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Health V2 Widget */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-white flex items-center gap-2">
-            <Activity size={16} className="text-emerald-400" />
-            Health V2
-          </h3>
-          <div className="text-right">
-            <div className="text-lg font-bold text-emerald-400">{health.weekly}%</div>
-            <div className="text-[10px] text-slate-500">Weekly Avg</div>
-          </div>
-        </div>
-        <div className="grid grid-cols-6 gap-2">
-          {health.breakdown.map((item, i) => (
-            <div key={i} className="text-center">
-              <div className="text-lg font-bold" style={{ color: item.value >= 80 ? '#1A8F68' : item.value >= 50 ? '#B06B0F' : '#C94B2A' }}>
-                {item.value}%
-              </div>
-              <div className="text-[9px] text-slate-500 mt-0.5">{item.label.split(' ')[0]}</div>
-              <div className="text-[8px] text-slate-600">{item.weight}%</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Streaks */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <h3 className="text-sm font-medium text-white mb-3">Streaks (Anti-Lazy Engine)</h3>
-        <div className="flex gap-2 overflow-x-auto">
-          {antilazy.streaks.map(streak => (
-            <div key={streak.type} className="flex-shrink-0 text-center px-3 py-2 bg-slate-800 rounded-lg">
-              <div className="text-xl mb-1">{streak.icon}</div>
-              <div className={`text-lg font-bold ${
-                streak.current >= 7 ? 'text-emerald-400' :
-                streak.current >= 3 ? 'text-amber-400' :
-                streak.current > 0 ? 'text-blue-400' : 'text-slate-600'
-              }`}>
-                {streak.current}
-              </div>
-              <div className="text-[9px] text-slate-500">{streak.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Adaptive Routing */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-white flex items-center gap-2">
-            <TrendingUp size={16} className="text-blue-400" />
-            Today's Allocation
-          </h3>
-          <span className="text-xs text-slate-400">
-            {routing.weakSubjects.length} weak subjects
-          </span>
-        </div>
-        <div className="space-y-3">
-          {routing.allocations.map(alloc => (
-            <div key={alloc.subject}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-slate-300">{alloc.subject}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px]" style={{ color: alloc.color }}>{alloc.label}</span>
-                  <span className="text-xs font-bold" style={{ color: alloc.color }}>{alloc.adjustedAllocation}%</span>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-slate-800 rounded-full">
-                <div 
-                  className="h-full rounded-full transition-all"
-                  style={{ width: `${alloc.adjustedAllocation}%`, backgroundColor: alloc.color }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Revision Command */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-white flex items-center gap-2">
-            <Clock size={16} className="text-amber-400" />
-            Revision Queue
-          </h3>
-          <div className="flex gap-2">
-            <span className="text-xs px-2 py-1 bg-red-900/50 text-red-400 rounded">
-              {revision.overdue.length} Overdue
-            </span>
-            <span className="text-xs px-2 py-1 bg-emerald-900/50 text-emerald-400 rounded">
-              {revision.dueToday.length} Today
-            </span>
-          </div>
-        </div>
-        {revision.highestPriority && (
-          <div className="p-3 bg-red-950/30 border border-red-900 rounded-lg mb-3">
-            <div className="text-xs text-red-400 mb-1">⚠️ Highest Priority</div>
-            <div className="text-sm text-white font-medium">{revision.highestPriority.topicName}</div>
-            <div className="text-xs text-slate-400 mt-1">
-              Overdue by {revision.highestPriority.overdueDays} days • {revision.highestPriority.subject}
-            </div>
-          </div>
-        )}
-        <div className="grid grid-cols-2 gap-2 text-center">
-          <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-lg font-bold text-emerald-400">{revision.revisionScore}%</div>
-            <div className="text-[10px] text-slate-500">Revision Score</div>
-          </div>
-          <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-lg font-bold text-amber-400">{revision.totalDebt}</div>
-            <div className="text-[10px] text-slate-500">Revision Debt</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Event Triggers */}
+      {/* 8. Active Events */}
       {events.hasActiveEvents && (
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
           <h3 className="text-sm font-medium text-white mb-3">Active Events</h3>
           <div className="space-y-2">
-            {events.events.filter(e => e.occurred).map(event => (
+            {events.events.filter((e: any) => e.occurred).map((event: any) => (
               <div key={event.id} className="p-3 bg-slate-800 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-lg">{event.icon}</span>
@@ -488,7 +356,7 @@ export default function UltimateDashboard() {
         </div>
       )}
 
-      {/* Freeze Mode Indicator */}
+      {/* 9. Freeze Mode Indicator */}
       {readiness.isPrepMode && (
         <div className="text-center py-3 px-4 bg-emerald-950/30 border border-emerald-900 rounded-xl">
           <p className="text-xs text-emerald-400 font-medium">🔒 EXECUTION MODE ACTIVE</p>
