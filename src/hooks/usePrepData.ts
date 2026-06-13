@@ -89,10 +89,17 @@ export function usePrepData() {
 
   const logHealthMutation = useMutation({
     mutationFn: async (input: HealthLogInput) => {
-      const { error } = await supabase.from("health_logs").upsert({ ...input, user_id: uid }, { onConflict: "user_id,log_date" });
-      if (error) throw error;
+      const payload = { ...input, user_id: uid, log_date: input.log_date || format(new Date(), "yyyy-MM-dd") };
+      const { error } = await supabase.from("health_logs").upsert(payload, { onConflict: "user_id,log_date" });
+      if (error) {
+        console.error("Health log save error:", error);
+        throw error;
+      }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["health_logs", uid] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["health_logs", uid] });
+      console.log("Health log saved successfully");
+    },
   });
   const logHealth = (input: HealthLogInput) => logHealthMutation.mutate(input);
   const isLoggingHealth = logHealthMutation.isPending;
@@ -349,6 +356,24 @@ export function usePrepData() {
   });
   const addStudyLog = (input: StudyLogInput) => addStudyLogMutation.mutate(input);
 
+  const updateStudyLogMutation = useMutation({
+    mutationFn: async ({id, data}: {id: string; data: StudyLogInput}) => {
+      const { error } = await supabase.from("study_logs").update(data).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["study_logs", uid] }),
+  });
+  const updateStudyLog = (id: string, data: StudyLogInput) => updateStudyLogMutation.mutate({id, data});
+
+  const deleteStudyLogMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("study_logs").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["study_logs", uid] }),
+  });
+  const deleteStudyLog = (id: string) => deleteStudyLogMutation.mutate(id);
+
   // ── Analytics RPC ──────────────────────────────────────────
   const { data: analyticsSummary } = useQuery({
     queryKey: ["analytics", uid],
@@ -379,7 +404,7 @@ export function usePrepData() {
     weekLogs, addWeekLog,
     jadProgress, updateJADProgress,
     netUnitMap, updateNETUnit,
-    studyLogs, addStudyLog,
+    studyLogs, addStudyLog, updateStudyLog, deleteStudyLog,
     analyticsSummary, streakCounts,
   };
 }

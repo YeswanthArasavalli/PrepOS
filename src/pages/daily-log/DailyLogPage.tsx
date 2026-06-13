@@ -17,8 +17,9 @@ interface DailyActivity {
 }
 
 export default function DailyLogPage() {
-  const { studyLogs, addStudyLog, healthLogs } = usePrepData();
+  const { studyLogs, addStudyLog, updateStudyLog, deleteStudyLog, healthLogs } = usePrepData();
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
     activity_type: "study" as DailyActivity["activity_type"],
     title: "",
@@ -39,7 +40,7 @@ export default function DailyLogPage() {
     const duration = calculateDuration(form.start_time, form.end_time);
     if (duration <= 0 || !form.title) return;
 
-    addStudyLog({
+    const payload: any = {
       log_date: format(new Date(), "yyyy-MM-dd"),
       subject: form.subject || "General",
       topic_name: form.title,
@@ -48,8 +49,50 @@ export default function DailyLogPage() {
       pyqs_solved: 0,
       accuracy_pct: 100,
       notes: form.notes || undefined,
-    } as any);
+      activity_type: form.activity_type,
+    };
 
+    if (editingId) {
+      updateStudyLog(editingId, payload);
+      setEditingId(null);
+    } else {
+      addStudyLog(payload);
+    }
+
+    setShowForm(false);
+    setForm({
+      activity_type: "study",
+      title: "",
+      subject: "",
+      topic: "",
+      start_time: format(new Date(), "HH:mm"),
+      end_time: format(new Date(), "HH:mm"),
+      notes: "",
+    });
+  };
+
+  const handleEdit = (log: any) => {
+    setEditingId(log.id);
+    setForm({
+      activity_type: log.activity_type || "study",
+      title: log.topic_name || log.subject || "",
+      subject: log.subject || "",
+      topic: log.topic || "",
+      start_time: log.start_time || "09:00",
+      end_time: log.end_time || "10:00",
+      notes: log.notes || "",
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm("Delete this activity log?")) {
+      deleteStudyLog(id);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
     setShowForm(false);
     setForm({
       activity_type: "study",
@@ -131,16 +174,25 @@ export default function DailyLogPage() {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-white">Today's Activities</h3>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (editingId) cancelEdit();
+            else setShowForm(!showForm);
+          }}
           className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-medium flex items-center gap-1"
         >
-          <Plus size={14} /> Add Activity
+          <Plus size={14} /> {editingId ? "Cancel Edit" : "Add Activity"}
         </button>
       </div>
 
       {/* Add Activity Form */}
       {showForm && (
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-medium text-white">{editingId ? "Edit Activity" : "Add New Activity"}</h4>
+            {editingId && (
+              <button onClick={cancelEdit} className="text-xs text-slate-400 hover:text-white">Cancel</button>
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-slate-400 block mb-1">Activity Type</label>
@@ -230,7 +282,7 @@ export default function DailyLogPage() {
             onClick={handleAdd}
             className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium"
           >
-            Save Activity
+            {editingId ? "Update Activity" : "Save Activity"}
           </button>
         </div>
       )}
@@ -254,7 +306,15 @@ export default function DailyLogPage() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <h4 className="text-sm font-medium text-white">{log.topic_name || log.subject}</h4>
-                      <span className="text-xs text-slate-400">{log.hours.toFixed(1)}h</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-slate-400">{log.hours.toFixed(1)}h</span>
+                        <button onClick={() => handleEdit(log)} className="p-1 hover:bg-slate-700 rounded text-blue-400">
+                          <Edit2 size={12} />
+                        </button>
+                        <button onClick={() => handleDelete(log.id)} className="p-1 hover:bg-slate-700 rounded text-red-400">
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
                     </div>
                     {log.subject && (
                       <div className="text-xs text-slate-400 mb-1">
