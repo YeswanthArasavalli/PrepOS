@@ -7,7 +7,7 @@ import { useHealthV2 } from "../../hooks/useHealthV2";
 import { usePriorities } from "../../hooks/usePriorities";
 import { useRevisionCommand } from "../../hooks/useRevisionCommand";
 import { useAutoTimeBlocking } from "../../hooks/useAutoTimeBlocking";
-import { Trophy, TrendingUp, AlertTriangle, Target, Clock, CheckCircle, Zap, Activity, Calendar } from "lucide-react";
+import { TrendingUp, AlertTriangle, Target, Clock, CheckCircle, Zap, Activity, Calendar } from "lucide-react";
 
 export default function UltimateDashboard() {
   const readiness = useReadinessEngine();
@@ -60,23 +60,23 @@ export default function UltimateDashboard() {
           <AlertTriangle size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-medium text-red-300">EXECUTION MODE ALERT</p>
-            <p className="text-xs text-red-400 mt-0.5">{execution?.message || ''}</p>
+            <p className="text-xs text-red-400 mt-0.5">{execution.message}</p>
             <div className="mt-2 flex gap-4 text-xs">
-              <span className="text-red-300">Planning: {(execution?.planningHours || 0).toFixed(1)}h</span>
-              <span className="text-emerald-300">Study: {(execution?.studyHours || 0).toFixed(1)}h</span>
-              <span className="text-amber-300">Ratio: {(execution?.ratio || 0).toFixed(2)}</span>
+              <span className="text-red-300">Planning: {(execution.planningHours || 0).toFixed(1)}h</span>
+              <span className="text-emerald-300">Study: {(execution.studyHours || 0).toFixed(1)}h</span>
+              <span className="text-amber-300">Ratio: {(execution.ratio || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>
       )}
       {antilazy?.isRecovering && (
         <div className={`px-4 py-3 border rounded-xl ${
-          antilazy?.recoveryMode === 'rebuild' ? 'bg-red-950/50 border-red-900' :
-          antilazy?.recoveryMode === 'emergency' ? 'bg-amber-950/50 border-amber-900' :
+          antilazy.recoveryMode === 'rebuild' ? 'bg-red-950/50 border-red-900' :
+          antilazy.recoveryMode === 'emergency' ? 'bg-amber-950/50 border-amber-900' :
           'bg-orange-950/50 border-orange-900'
         }`}>
-          <p className="text-sm font-medium text-white">{antilazy?.getRecoveryRecommendations()?.title || ''}</p>
-          <p className="text-xs text-slate-300 mt-0.5">{antilazy?.getRecoveryRecommendations()?.message || ''}</p>
+          <p className="text-sm font-medium text-white">{antilazy.getRecoveryRecommendations().title}</p>
+          <p className="text-xs text-slate-300 mt-0.5">{antilazy.getRecoveryRecommendations().message}</p>
         </div>
       )}
 
@@ -87,10 +87,10 @@ export default function UltimateDashboard() {
             <Target size={16} className="text-emerald-400" />
             Today's Top Tasks
           </h3>
-          {revision.needsAttention && (
+          {revision?.needsAttention && (
             <span className="text-xs px-2 py-1 bg-red-900/50 text-red-400 rounded flex items-center gap-1">
               <AlertTriangle size={10} />
-              {revision.overdue.length} Overdue
+              {(revision.overdue || []).length} Overdue
             </span>
           )}
         </div>
@@ -103,8 +103,8 @@ export default function UltimateDashboard() {
           </div>
         )}
         <div className="space-y-2">
-          {priorities.priorities.slice(0, 3).map((task, i) => (
-            <div key={task.id} className="flex items-center gap-3 p-3 bg-slate-800 rounded-lg border border-slate-700">
+          {(priorities?.priorities || []).slice(0, 3).map((task: any, i) => (
+            <div key={task.id || i} className="flex items-center gap-3 p-3 bg-slate-800 rounded-lg border border-slate-700">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                 task.priority === 1 ? 'bg-red-900 text-red-400' :
                 task.priority === 2 ? 'bg-amber-900 text-amber-400' :
@@ -113,18 +113,18 @@ export default function UltimateDashboard() {
                 {i + 1}
               </div>
               <div className="flex-1">
-                <div className="text-sm text-white font-medium">{task.title}</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">{task.reason}</div>
+                <div className="text-sm text-white font-medium">{task.title || 'Task'}</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">{task.reason || ''}</div>
                 {task.priorityScore && (
                   <div className="text-[10px] text-slate-500 mt-0.5">
-                    Score: {task.priorityScore.toFixed(1)} (W{task.priorityComponents?.weakness}/R{task.priorityComponents?.revision}/E{task.priorityComponents?.exam}/M{task.priorityComponents?.mock})
+                    Score: {task.priorityScore.toFixed(1)} (W{task.priorityComponents?.weakness || 0}/R{task.priorityComponents?.revision || 0}/E{task.priorityComponents?.exam || 0}/M{task.priorityComponents?.mock || 0})
                   </div>
                 )}
               </div>
               <div className="text-right">
-                <div className="text-xs text-slate-500">{task.estimatedMinutes}m</div>
+                <div className="text-xs text-slate-500">{task.estimatedMinutes || 0}m</div>
                 <div className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 mt-1 capitalize">
-                  {task.type}
+                  {task.type || 'task'}
                 </div>
               </div>
             </div>
@@ -148,7 +148,7 @@ export default function UltimateDashboard() {
             </span>
           </div>
         </div>
-{revision?.highestPriority ? (
+        {revision?.highestPriority ? (
           <div className="p-3 bg-red-950/30 border border-red-900 rounded-lg mb-3">
             <div className="text-xs text-red-400 mb-1">⚠️ Highest Priority</div>
             <div className="text-sm text-white font-medium">{revision.highestPriority.topicName}</div>
@@ -158,14 +158,14 @@ export default function UltimateDashboard() {
           </div>
         ) : (revision?.dueToday || []).length > 0 ? (
           <div className="space-y-2">
-            {(revision?.dueToday || []).slice(0, 3).map((rev: any, i) => (
+            {(revision.dueToday || []).slice(0, 3).map((rev: any, i) => (
               <div key={i} className="flex items-center gap-3 p-2 bg-slate-800 rounded-lg">
                 <div className="w-6 h-6 rounded-full bg-emerald-900 text-emerald-400 flex items-center justify-center text-xs font-bold">
                   {i + 1}
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm text-white">{rev?.topicName || 'Topic'}</div>
-                  <div className="text-[10px] text-slate-400">{rev?.subject || ''} • Due today</div>
+                  <div className="text-sm text-white">{rev.topicName || 'Topic'}</div>
+                  <div className="text-[10px] text-slate-400">{rev.subject || ''} • Due today</div>
                 </div>
               </div>
             ))}
@@ -179,11 +179,11 @@ export default function UltimateDashboard() {
         )}
         <div className="grid grid-cols-2 gap-2 mt-3">
           <div className="p-2 bg-slate-800 rounded-lg text-center">
-            <div className="text-lg font-bold text-emerald-400">{revision?.revisionScore || 0}%</div>
+            <div className="text-lg font-bold text-emerald-400">{revision.revisionScore || 0}%</div>
             <div className="text-[9px] text-slate-500">Revision Score</div>
           </div>
           <div className="p-2 bg-slate-800 rounded-lg text-center">
-            <div className="text-lg font-bold text-amber-400">{revision?.totalDebt || 0}</div>
+            <div className="text-lg font-bold text-amber-400">{revision.totalDebt || 0}</div>
             <div className="text-[9px] text-slate-500">Total Debt</div>
           </div>
         </div>
@@ -197,33 +197,33 @@ export default function UltimateDashboard() {
             Health V2 + Streaks
           </h3>
           <div className="text-right">
-            <div className="text-lg font-bold text-emerald-400">{health?.weekly || 0}%</div>
+            <div className="text-lg font-bold text-emerald-400">{health.weekly || 0}%</div>
             <div className="text-[10px] text-slate-500">Weekly Avg</div>
           </div>
         </div>
         <div className="grid grid-cols-6 gap-2 mb-4">
-          {(health?.breakdown || []).map((item: any, i) => (
+          {(health.breakdown || []).map((item: any, i) => (
             <div key={i} className="text-center">
-              <div className="text-lg font-bold" style={{ color: item.value >= 80 ? '#1A8F68' : item.value >= 50 ? '#B06B0F' : '#C94B2A' }}>
-                {item.value}%
+              <div className="text-lg font-bold" style={{ color: (item.value || 0) >= 80 ? '#1A8F68' : (item.value || 0) >= 50 ? '#B06B0F' : '#C94B2A' }}>
+                {item.value || 0}%
               </div>
-              <div className="text-[9px] text-slate-500 mt-0.5">{item.label.split(' ')[0]}</div>
-              <div className="text-[8px] text-slate-600">{item.weight}%</div>
+              <div className="text-[9px] text-slate-500 mt-0.5">{item.label?.split(' ')[0] || ''}</div>
+              <div className="text-[8px] text-slate-600">{item.weight || 0}%</div>
             </div>
           ))}
         </div>
-        <div className="flex gap-2 overflow-x-auto">
-          {(antilazy.streaks || []).map((streak: any) => (
-            <div key={streak.type} className="flex-shrink-0 text-center px-3 py-2 bg-slate-800 rounded-lg">
-              <div className="text-xl mb-1">{streak.icon}</div>
+        <div className="mt-3 flex gap-2 overflow-x-auto">
+          {(antilazy.streaks || []).map((streak: any, i) => (
+            <div key={streak.type || i} className="flex-shrink-0 text-center px-3 py-2 bg-slate-800 rounded-lg">
+              <div className="text-xl mb-1">{streak.icon || '•'}</div>
               <div className={`text-lg font-bold ${
-                streak.current >= 7 ? 'text-emerald-400' :
-                streak.current >= 3 ? 'text-amber-400' :
-                streak.current > 0 ? 'text-blue-400' : 'text-slate-600'
+                (streak.current || 0) >= 7 ? 'text-emerald-400' :
+                (streak.current || 0) >= 3 ? 'text-amber-400' :
+                (streak.current || 0) > 0 ? 'text-blue-400' : 'text-slate-600'
               }`}>
-                {streak.current}
+                {streak.current || 0}
               </div>
-              <div className="text-[9px] text-slate-500">{streak.label}</div>
+              <div className="text-[9px] text-slate-500">{streak.label || ''}</div>
             </div>
           ))}
         </div>
@@ -239,17 +239,17 @@ export default function UltimateDashboard() {
           <span className="text-xs text-slate-400">Auto-generated</span>
         </div>
         <div className="space-y-2">
-          {(timetable?.blocks || []).slice(0, 6).map((block: any, i) => (
+          {(timetable.blocks || []).slice(0, 6).map((block: any, i) => (
             <div key={i} className="flex items-center gap-3 p-2 bg-slate-800 rounded-lg">
-              <div className="text-xs text-slate-400 w-16 flex-shrink-0">{block.time}</div>
+              <div className="text-xs text-slate-400 w-16 flex-shrink-0">{block.time || '--:--'}</div>
               <div className={`w-1 h-8 rounded-full ${
                 block.type === 'study' ? 'bg-emerald-500' :
                 block.type === 'health' ? 'bg-blue-500' :
                 block.type === 'break' ? 'bg-slate-600' : 'bg-purple-500'
               }`}></div>
               <div className="flex-1">
-                <div className="text-sm text-white">{block.activity}</div>
-                <div className="text-[10px] text-slate-500">{block.subject || block.duration}</div>
+                <div className="text-sm text-white">{block.activity || 'Free time'}</div>
+                <div className="text-[10px] text-slate-500">{block.subject || block.duration || ''}</div>
               </div>
             </div>
           ))}
@@ -261,7 +261,7 @@ export default function UltimateDashboard() {
         </div>
       </div>
 
-{/* 5. Subject Allocation */}
+      {/* 5. Subject Allocation */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
@@ -269,26 +269,26 @@ export default function UltimateDashboard() {
             Subject Allocation
           </h3>
           <span className="text-xs text-slate-400">
-            {(routing?.weakSubjects || []).length} weak subjects
+            {(routing.weakSubjects || []).length} weak subjects
           </span>
         </div>
         <div className="space-y-3">
-          {(routing?.allocations || []).map((alloc: any) => (
-            <div key={alloc?.subject || i}>
+          {(routing.allocations || []).map((alloc: any, i) => (
+            <div key={alloc.subject || i}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-slate-300">{alloc?.subject || 'Subject'}</span>
+                <span className="text-xs text-slate-300">{alloc.subject || 'Subject'}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px]" style={{ color: alloc?.color || '#94a3b8' }}>{alloc?.label || ''}</span>
-                  <span className="text-xs font-bold" style={{ color: alloc?.color || '#94a3b8' }}>{alloc?.adjustedAllocation || 0}%</span>
+                  <span className="text-[10px]" style={{ color: alloc.color || '#94a3b8' }}>{alloc.label || ''}</span>
+                  <span className="text-xs font-bold" style={{ color: alloc.color || '#94a3b8' }}>{alloc.adjustedAllocation || 0}%</span>
                 </div>
               </div>
               <div className="w-full h-2 bg-slate-800 rounded-full">
                 <div 
                   className="h-full rounded-full transition-all"
-                  style={{ width: `${alloc?.adjustedAllocation || 0}%`, backgroundColor: alloc?.color || '#64748b' }}
+                  style={{ width: `${alloc.adjustedAllocation || 0}%`, backgroundColor: alloc.color || '#64748b' }}
                 />
               </div>
-              {alloc?.reason && (
+              {alloc.reason && (
                 <div className="text-[10px] text-slate-500 mt-0.5">
                   {alloc.reason}
                 </div>
@@ -303,25 +303,25 @@ export default function UltimateDashboard() {
         <h3 className="text-sm font-medium text-white mb-3">Weekly Progress</h3>
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="p-3 bg-slate-800 rounded-lg text-center">
-            <div className="text-lg font-bold text-emerald-400">{execution?.weeklyScore || 0}</div>
+            <div className="text-lg font-bold text-emerald-400">{execution.weeklyScore || 0}</div>
             <div className="text-[10px] text-slate-500">Execution Score</div>
           </div>
           <div className="p-3 bg-slate-800 rounded-lg text-center">
-            <div className="text-lg font-bold text-blue-400">{health?.weekly || 0}%</div>
+            <div className="text-lg font-bold text-blue-400">{health.weekly || 0}%</div>
             <div className="text-[10px] text-slate-500">Health Avg</div>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-sm font-bold text-white">{(execution?.studyHours || 0).toFixed(1)}h</div>
+            <div className="text-sm font-bold text-white">{(execution.studyHours || 0).toFixed(1)}h</div>
             <div className="text-[9px] text-slate-500">Study</div>
           </div>
           <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-sm font-bold text-white">{(execution?.planningHours || 0).toFixed(1)}h</div>
+            <div className="text-sm font-bold text-white">{(execution.planningHours || 0).toFixed(1)}h</div>
             <div className="text-[9px] text-slate-500">Planning</div>
           </div>
           <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-sm font-bold text-white">{(execution?.ratio || 0).toFixed(2)}</div>
+            <div className="text-sm font-bold text-white">{(execution.ratio || 0).toFixed(2)}</div>
             <div className="text-[9px] text-slate-500">Ratio</div>
           </div>
         </div>
@@ -335,10 +335,10 @@ export default function UltimateDashboard() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {[
-            { label: "SSC CGL", value: readiness?.readiness?.cgl || 0, color: "text-red-400" },
-            { label: "Coal India", value: readiness?.readiness?.coal || 0, color: "text-amber-400" },
-            { label: "UGC NET", value: readiness?.readiness?.net || 0, color: "text-purple-400" },
-            { label: "UPSC JAD", value: readiness?.readiness?.jad || 0, color: "text-violet-400" },
+            { label: "SSC CGL", value: readiness.readiness?.cgl || 0, color: "text-red-400" },
+            { label: "Coal India", value: readiness.readiness?.coal || 0, color: "text-amber-400" },
+            { label: "UGC NET", value: readiness.readiness?.net || 0, color: "text-purple-400" },
+            { label: "UPSC JAD", value: readiness.readiness?.jad || 0, color: "text-violet-400" },
           ].map(exam => (
             <div key={exam.label} className="text-center p-2 bg-slate-800 rounded-lg">
               <div className={`text-xl font-bold ${exam.color}`}>{exam.value}%</div>
@@ -353,97 +353,14 @@ export default function UltimateDashboard() {
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
           <h3 className="text-sm font-medium text-white mb-3">Active Events</h3>
           <div className="space-y-2">
-            {(events?.events || []).filter((e: any) => e.occurred).map((event: any) => (
-              <div key={event?.id || i} className="p-3 bg-slate-800 rounded-lg">
+{(events.events || []).filter((e: any) => e.occurred).map((event: any, i) => (
+            <div key={event.id || i} className="p-3 bg-slate-800 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">{event?.icon || '•'}</span>
-                  <span className="text-sm text-white font-medium">{event?.label || 'Event'}</span>
+                  <span className="text-lg">{event.icon || '•'}</span>
+                  <span className="text-sm text-white font-medium">{event.label || 'Event'}</span>
                 </div>
                 <div className="text-xs text-slate-400">
-                  {event?.actions?.[0] || ''}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* 9. Freeze Mode Indicator */}
-      {readiness?.isPrepMode && (
-        <div className="text-center py-3 px-4 bg-emerald-950/30 border border-emerald-900 rounded-xl">
-          <p className="text-xs text-emerald-400 font-medium">🔒 EXECUTION MODE ACTIVE</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">
-            System locked. Only study, revise, mock, and analyze allowed.
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-      {/* 6. Weekly Progress */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <h3 className="text-sm font-medium text-white mb-3">Weekly Progress</h3>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <div className="p-3 bg-slate-800 rounded-lg text-center">
-            <div className="text-lg font-bold text-emerald-400">{execution?.weeklyScore || 0}</div>
-            <div className="text-[10px] text-slate-500">Execution Score</div>
-          </div>
-          <div className="p-3 bg-slate-800 rounded-lg text-center">
-            <div className="text-lg font-bold text-blue-400">{health?.weekly || 0}%</div>
-            <div className="text-[10px] text-slate-500">Health Avg</div>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-sm font-bold text-white">{(execution?.studyHours || 0).toFixed(1)}h</div>
-            <div className="text-[9px] text-slate-500">Study</div>
-          </div>
-          <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-sm font-bold text-white">{(execution?.planningHours || 0).toFixed(1)}h</div>
-            <div className="text-[9px] text-slate-500">Planning</div>
-          </div>
-          <div className="p-2 bg-slate-800 rounded-lg">
-            <div className="text-sm font-bold text-white">{(execution?.ratio || 0).toFixed(2)}</div>
-            <div className="text-[9px] text-slate-500">Ratio</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 7. Exam Readiness */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-white">Exam Readiness</h3>
-          <span className="text-[10px] text-slate-500">Analytics</span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {[
-            { label: "SSC CGL", value: readiness?.readiness?.cgl || 0, color: "text-red-400" },
-            { label: "Coal India", value: readiness?.readiness?.coal || 0, color: "text-amber-400" },
-            { label: "UGC NET", value: readiness?.readiness?.net || 0, color: "text-purple-400" },
-            { label: "UPSC JAD", value: readiness?.readiness?.jad || 0, color: "text-violet-400" },
-          ].map(exam => (
-            <div key={exam.label} className="text-center p-2 bg-slate-800 rounded-lg">
-              <div className={`text-xl font-bold ${exam.color}`}>{exam.value}%</div>
-              <div className="text-[9px] text-slate-500 mt-0.5">{exam.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 8. Active Events */}
-      {events?.hasActiveEvents && (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-white mb-3">Active Events</h3>
-          <div className="space-y-2">
-            {(events?.events || []).filter((e: any) => e.occurred).map((event: any) => (
-              <div key={event?.id || i} className="p-3 bg-slate-800 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">{event?.icon || '•'}</span>
-                  <span className="text-sm text-white font-medium">{event?.label || 'Event'}</span>
-                </div>
-                <div className="text-xs text-slate-400">
-                  {event?.actions?.[0] || ''}
+                  {event.actions?.[0] || ''}
                 </div>
               </div>
             ))}
