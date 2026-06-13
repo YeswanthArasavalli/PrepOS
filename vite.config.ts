@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "icon-192.png", "icon-512.png"],
+      includeAssets: ["favicon.svg"],
       manifest: {
         name: "PrepOS — Preparation Operating System",
         short_name: "PrepOS",
@@ -19,8 +19,7 @@ export default defineConfig({
         scope: "/",
         start_url: "/",
         icons: [
-          { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
-          { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+          { src: "/favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" },
         ],
       },
       workbox: {
@@ -31,10 +30,25 @@ export default defineConfig({
             options: { cacheName: "supabase-cache", networkTimeoutSeconds: 5 },
           },
         ],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
       },
     }),
   ],
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          supabase: ['@supabase/supabase-js'],
+          tanstack: ['@tanstack/react-query'],
+          lucide: ['lucide-react'],
+          date: ['date-fns']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 2000
+  }
 });
