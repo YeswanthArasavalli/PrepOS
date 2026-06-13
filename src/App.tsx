@@ -19,6 +19,7 @@ import TimetablePage     from "./pages/timetable/TimetablePage";
 import CGLPage           from "./pages/cgl/CGLPage";
 import NTPCPage          from "./pages/ntpc/NTPCPage";
 import SetupPage         from "./pages/setup/SetupPage";
+import DailyLogPage      from "./pages/daily-log/DailyLogPage";
 
 function FullPageLoader() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="weekly"      element={<WeeklyPage />} />
         <Route path="calendar"    element={<CalendarPage />} />
         <Route path="timetable"   element={<TimetablePage />} />
+        <Route path="daily-log"   element={<DailyLogPage />} />
         <Route path="settings"    element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

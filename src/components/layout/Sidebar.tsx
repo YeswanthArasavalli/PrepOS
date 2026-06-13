@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { LayoutDashboard, Heart, BookOpen, Target, BarChart2, Zap, Settings, LogOut, Calendar, ListTodo, BookMarked, Clock, Trophy, Train } from "lucide-react";
+import { LayoutDashboard, Heart, BookOpen, Target, BarChart2, Zap, Settings, LogOut, Calendar, ListTodo, BookMarked, Clock, Trophy, Train, ClipboardList } from "lucide-react";
 
 const NAV = [
   { to: "/",          icon: LayoutDashboard, label: "Dashboard" },
   { to: "/planner",   icon: ListTodo,        label: "Planner"   },
   { to: "/timetable", icon: Clock,           label: "Timetable" },
+  { to: "/daily-log", icon: ClipboardList,   label: "Daily Log" },
   { to: "/health",    icon: Heart,           label: "Health"    },
   { to: "/study",     icon: BookOpen,        label: "Study"     },
   { to: "/mocks",     icon: Target,          label: "Mocks"     },
