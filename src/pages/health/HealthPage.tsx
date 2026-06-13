@@ -44,6 +44,7 @@ export default function HealthPage() {
       strength_minutes: form.strength_minutes,
       mental_health_score: form.mental_health_score,
     };
+    console.log("Saving health log:", logData);
     logHealth(logData);
     setShowForm(false);
     setForm({wake_time:"05:00",sleep_time:"21:30",sleep_hours:7,water_liters:3,steps:10000,exercise_minutes:30,strength_minutes:20,mental_health_score:8});

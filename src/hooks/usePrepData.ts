@@ -90,17 +90,34 @@ export function usePrepData() {
 
   const logHealthMutation = useMutation({
     mutationFn: async (input: HealthLogInput) => {
-      const payload = { ...input, user_id: uid, log_date: input.log_date || format(new Date(), "yyyy-MM-dd") };
+      console.log("Health input received:", input);
+      const payload = { 
+        ...input, 
+        user_id: uid, 
+        log_date: input.log_date || format(new Date(), "yyyy-MM-dd"),
+        // Ensure required fields exist
+        wake: input.wake || 0,
+        sleep: input.sleep || 0,
+        water: input.water || 0,
+        exercise: input.exercise || 0,
+        steps: input.steps || 0,
+        strength: input.strength || 0,
+      };
+      console.log("Health payload to save:", payload);
       const { error } = await supabase.from("health_logs").upsert(payload, { onConflict: "user_id,log_date" });
       if (error) {
         console.error("Health log save error:", error);
         throw error;
       }
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["health_logs", uid] });
       console.log("Health log saved successfully");
     },
+    onSuccess: () => {
+      console.log("Health mutation onSuccess - invalidating queries");
+      qc.invalidateQueries({ queryKey: ["health_logs", uid] });
+    },
+    onError: (error) => {
+      console.error("Health mutation onError:", error);
+    }
   });
   const logHealth = (input: HealthLogInput) => logHealthMutation.mutate(input);
   const isLoggingHealth = logHealthMutation.isPending;
