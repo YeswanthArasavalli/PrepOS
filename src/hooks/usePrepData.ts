@@ -379,6 +379,7 @@ export function usePrepData() {
     weekLogs, addWeekLog,
     jadProgress, updateJADProgress,
     netUnitMap, updateNETUnit,
+    studyLogs, addStudyLog,
     analyticsSummary, streakCounts,
   };
 }
