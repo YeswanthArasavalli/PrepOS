@@ -31,14 +31,16 @@ export function useDailyPlan() {
   const uid = user?.id ?? "";
   const today = new Date().toISOString().split("T")[0];
 
+  // Fetch daily plan from database (not RPC)
   const { data: dailyPlan, isLoading, refetch } = useQuery({
     queryKey: ["daily_plan", uid, today],
     queryFn: async () => {
-      const { data } = await supabase.rpc("generate_daily_plan", { 
-        p_user_id: uid, 
-        p_date: today 
-      });
-      return data?.plan as DailyPlan | null;
+      const { data } = await supabase.from("daily_plans")
+        .select("*")
+        .eq("user_id", uid)
+        .eq("plan_date", today)
+        .single();
+      return data || null;
     },
     enabled: !!uid,
     staleTime: 5 * 60 * 1000,
@@ -130,17 +132,24 @@ export function useDailyPlan() {
 
   const regeneratePlanMutation = useMutation({
     mutationFn: async () => {
+      // Just regenerate from existing data, no RPC needed
       const { error } = await supabase.from("daily_plans").delete()
         .eq("user_id", uid).eq("plan_date", today);
       
       if (error) throw error;
       
-      const { data } = await supabase.rpc("generate_daily_plan", { 
-        p_user_id: uid, 
-        p_date: today 
-      });
+      // Create empty plan for today
+      const { data: newPlan } = await supabase.from("daily_plans").insert({
+        user_id: uid,
+        plan_date: today,
+        tasks: [],
+        study_hours_target: 8,
+        health_target: { wake: 1, sleep: 1, water: 3, exercise: 1, steps: 10000 },
+        completion_pct: 0,
+        is_generated: false,
+      }).select().single();
       
-      return data?.plan;
+      return newPlan;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["daily_plan", uid] }),
   });
