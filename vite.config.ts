@@ -9,6 +9,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg"],
+      manifestFilename: "manifest.webmanifest",
       manifest: {
         name: "PrepOS — Preparation Operating System",
         short_name: "PrepOS",

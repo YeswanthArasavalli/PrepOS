@@ -106,10 +106,10 @@ export default function DailyLogPage() {
   };
 
   const today = format(new Date(), "yyyy-MM-dd");
-  const todayLogs = (studyLogs || []).filter((log: any) => log.log_date === today);
+  const todayLogs = Array.isArray(studyLogs) ? studyLogs.filter((log: any) => log.log_date === today) : [];
   const totalStudyHours = todayLogs.reduce((sum: number, log: any) => sum + (log.hours || 0), 0);
   
-  const todayHealth = (healthLogs || []).find((log: any) => log.log_date === today);
+  const todayHealth = Array.isArray(healthLogs) ? healthLogs.find((log: any) => log.log_date === today) : undefined;
 
   const getActivityIcon = (type: string) => {
     switch (type) {

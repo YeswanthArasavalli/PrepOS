@@ -25,7 +25,7 @@ export function useAntiLazy() {
         .eq("user_id", uid)
         .order("log_date", { ascending: false })
         .limit(30);
-      return data || [];
+      return Array.isArray(data) ? data : [];
     },
     enabled: !!uid,
   });
@@ -37,63 +37,63 @@ export function useAntiLazy() {
       const { data } = await supabase.from("streaks")
         .select("*")
         .eq("user_id", uid);
-      return data || [];
+      return Array.isArray(data) ? data : [];
     },
     enabled: !!uid,
   });
 
   // Calculate streaks from health logs
   const calculateStreaks = () => {
-    if (!healthLogs) return [];
+    if (!Array.isArray(healthLogs) || healthLogs.length === 0) return [];
 
     const streaks: StreakData[] = [
       {
         type: "wake",
-        current: calcStreak((healthLogs || []).map(h => ({ 
+        current: calcStreak(healthLogs.map(h => ({ 
           date: h.log_date, 
           completed: h.wake >= 1 
         })), "wake"),
-        longest: (existingStreaks || []).find(s => s.streak_type === "wake")?.longest_streak || 0,
+        longest: Array.isArray(existingStreaks) ? existingStreaks.find(s => s.streak_type === "wake")?.longest_streak || 0 : 0,
         icon: "🌅",
         label: "5AM Wake"
       },
       {
         type: "sleep",
-        current: calcStreak((healthLogs || []).map(h => ({ 
+        current: calcStreak(healthLogs.map(h => ({ 
           date: h.log_date, 
           completed: h.sleep >= 1 
         })), "sleep"),
-        longest: (existingStreaks || []).find(s => s.streak_type === "sleep")?.longest_streak || 0,
+        longest: Array.isArray(existingStreaks) ? existingStreaks.find(s => s.streak_type === "sleep")?.longest_streak || 0 : 0,
         icon: "😴",
         label: "Sleep"
       },
       {
         type: "water",
-        current: calcStreak((healthLogs || []).map(h => ({ 
+        current: calcStreak(healthLogs.map(h => ({ 
           date: h.log_date, 
           completed: h.water >= 0.9 
         })), "water"),
-        longest: (existingStreaks || []).find(s => s.streak_type === "water")?.longest_streak || 0,
+        longest: Array.isArray(existingStreaks) ? existingStreaks.find(s => s.streak_type === "water")?.longest_streak || 0 : 0,
         icon: "💧",
         label: "Water"
       },
       {
         type: "steps",
-        current: calcStreak((healthLogs || []).map(h => ({ 
+        current: calcStreak(healthLogs.map(h => ({ 
           date: h.log_date, 
           completed: h.steps >= 0.9 
         })), "steps"),
-        longest: (existingStreaks || []).find(s => s.streak_type === "steps")?.longest_streak || 0,
+        longest: Array.isArray(existingStreaks) ? existingStreaks.find(s => s.streak_type === "steps")?.longest_streak || 0 : 0,
         icon: "🏃",
         label: "Steps"
       },
       {
         type: "exercise",
-        current: calcStreak((healthLogs || []).map(h => ({ 
+        current: calcStreak(healthLogs.map(h => ({ 
           date: h.log_date, 
           completed: h.exercise >= 1 
         })), "exercise"),
-        longest: (existingStreaks || []).find(s => s.streak_type === "exercise")?.longest_streak || 0,
+        longest: Array.isArray(existingStreaks) ? existingStreaks.find(s => s.streak_type === "exercise")?.longest_streak || 0 : 0,
         icon: "💪",
         label: "Exercise"
       },

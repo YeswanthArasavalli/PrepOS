@@ -99,12 +99,12 @@ export function useWeeklyTargets() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["weekly_targets", uid] }),
   });
 
-  const currentWeek = (weeklyTargets || []).find((t) => {
+  const currentWeek = Array.isArray(weeklyTargets) ? weeklyTargets.find((t) => {
     const now = new Date();
     const start = new Date(t.week_start);
     const end = new Date(t.week_end);
     return now >= start && now <= end;
-  });
+  }) : undefined;
 
   return {
     weeklyTargets,

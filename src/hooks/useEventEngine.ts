@@ -143,18 +143,18 @@ export function useEventEngine() {
         .select("*")
         .eq("user_id", uid)
         .eq("occurred", true);
-      return data || [];
+      return Array.isArray(data) ? data : [];
     },
     enabled: !!uid,
   });
 
-  const triggeredIds = new Set((triggeredEvents || []).map(e => e.event_id) || []);
+  const triggeredIds = new Set(Array.isArray(triggeredEvents) ? triggeredEvents.map(e => e.event_id) : []);
 
   // Merge definitions with triggered status
   const events = EVENT_DEFINITIONS.map(event => ({
     ...event,
     occurred: triggeredIds.has(event.event_id),
-    triggered_at: (triggeredEvents || []).find(e => e.event_id === event.event_id)?.occurred_at
+    triggered_at: Array.isArray(triggeredEvents) ? triggeredEvents.find(e => e.event_id === event.event_id)?.occurred_at : undefined
   }));
 
   // Trigger event mutation
