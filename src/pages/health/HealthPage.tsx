@@ -28,21 +28,14 @@ export default function HealthPage() {
   const handleLog = () => {
     const logData: any = {
       log_date: format(new Date(), "yyyy-MM-dd"),
-      // Map new form fields to database schema
+      // ONLY save fields that exist in database schema
       wake: form.wake_time >= "05:00" && form.wake_time <= "05:30" ? 1 : 0,
       sleep: form.sleep_hours >= 7 ? 1 : 0,
       water: Math.min(1, form.water_liters / 3),
       steps: Math.min(1, form.steps / 10000),
       exercise: form.exercise_minutes >= 30 ? 1 : 0,
       strength: form.strength_minutes >= 20 ? 1 : 0,
-      // Also save detailed fields
-      wake_time: form.wake_time,
-      sleep_time: form.sleep_time,
-      sleep_hours: form.sleep_hours,
-      water_liters: form.water_liters,
-      exercise_minutes: form.exercise_minutes,
-      strength_minutes: form.strength_minutes,
-      mental_health_score: form.mental_health_score,
+      notes: `Wake: ${form.wake_time} | Sleep: ${form.sleep_hours}h | Water: ${form.water_liters}L | Steps: ${form.steps} | Exercise: ${form.exercise_minutes}m | Strength: ${form.strength_minutes}m | Mental: ${form.mental_health_score}/10`,
     };
     console.log("Saving health log:", logData);
     logHealth(logData);
@@ -53,22 +46,16 @@ export default function HealthPage() {
   const handleUpdate = () => {
     if(!editingId) return;
     const logData: any = {
-      // Map new form fields to database schema
+      // ONLY save fields that exist in database schema
       wake: form.wake_time >= "05:00" && form.wake_time <= "05:30" ? 1 : 0,
       sleep: form.sleep_hours >= 7 ? 1 : 0,
       water: Math.min(1, form.water_liters / 3),
       steps: Math.min(1, form.steps / 10000),
       exercise: form.exercise_minutes >= 30 ? 1 : 0,
       strength: form.strength_minutes >= 20 ? 1 : 0,
-      // Also save detailed fields
-      wake_time: form.wake_time,
-      sleep_time: form.sleep_time,
-      sleep_hours: form.sleep_hours,
-      water_liters: form.water_liters,
-      exercise_minutes: form.exercise_minutes,
-      strength_minutes: form.strength_minutes,
-      mental_health_score: form.mental_health_score,
+      notes: `Wake: ${form.wake_time} | Sleep: ${form.sleep_hours}h | Water: ${form.water_liters}L | Steps: ${form.steps} | Exercise: ${form.exercise_minutes}m | Strength: ${form.strength_minutes}m | Mental: ${form.mental_health_score}/10`,
     };
+    console.log("Updating health log:", logData);
     updateHealth(editingId, logData);
     setEditingId(null);
     setShowForm(false);
@@ -246,7 +233,7 @@ export default function HealthPage() {
                 <div className="flex-1">
                   <span className="text-xs text-slate-400">{format(new Date(log.log_date),"EEE, dd MMM")}</span>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    🌅 {log.wake_time || 'N/A'} • 😴 {log.sleep_hours || 0}h • 💧 {log.water_liters || 0}L • 🏃 {log.steps || 0} • 💪 {log.exercise_minutes || 0}m
+                    {log.notes || `💧 ${(log.water * 3).toFixed(1)}L • 🏃 ${(log.steps * 10000).toFixed(0)} • 💪 ${log.exercise >= 1 ? 'Yes' : 'No'}`}
                   </div>
                 </div>
                 <div className="flex gap-2">
