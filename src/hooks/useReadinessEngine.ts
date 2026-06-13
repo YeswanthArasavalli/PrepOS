@@ -24,7 +24,7 @@ export function useReadinessEngine() {
   const { user, profile } = useAuth();
   const qc = useQueryClient();
   const uid = user?.id ?? "";
-  const day = profile?.current_day || 1;
+  const day = (profile?.current_day || 1) + 1; // Add 1 so June 13 = Day 1
   
   // GAP 9: Start Date Lock Mode - Check if prep has started
   const prepStartDate = profile?.prep_start_date ? new Date(profile.prep_start_date) : new Date("2026-06-13");

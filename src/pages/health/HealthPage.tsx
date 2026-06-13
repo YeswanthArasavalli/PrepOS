@@ -224,14 +224,14 @@ export default function HealthPage() {
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
         <h3 className="text-sm font-medium text-white mb-3">Recent Logs</h3>
-        {healthLogs.length===0
+        {(healthLogs || []).length === 0
           ? <p className="text-xs text-slate-500 text-center py-4">No logs yet.</p>
-          : <div className="space-y-2">{healthLogs.slice(0,7).map((log:any)=>(
+          : <div className="space-y-2">{(healthLogs || []).slice(0,7).map((log:any)=>(
               <div key={log.id} className="flex items-center justify-between py-2 border-b border-slate-800 last:border-0">
                 <div className="flex-1">
                   <span className="text-xs text-slate-400">{format(new Date(log.log_date),"EEE, dd MMM")}</span>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    🌅 {log.wake_time} • 😴 {log.sleep_hours}h • 💧 {log.water_liters}L • 🏃 {log.steps} • 💪 {log.exercise_minutes}m
+                    🌅 {log.wake_time || 'N/A'} • 😴 {log.sleep_hours || 0}h • 💧 {log.water_liters || 0}L • 🏃 {log.steps || 0} • 💪 {log.exercise_minutes || 0}m
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -241,7 +241,7 @@ export default function HealthPage() {
                   <button onClick={()=>handleDelete(log.id)} className="p-1 hover:bg-slate-800 rounded text-red-400">
                     <Trash2 size={12}/>
                   </button>
-                  <span className={`text-xs font-medium px-2 py-1 rounded ${log.health_score>=70?"bg-emerald-950 text-emerald-400":log.health_score>=40?"bg-amber-950 text-amber-400":"bg-red-950 text-red-400"}`}>{log.health_score}%</span>
+                  <span className={`text-xs font-medium px-2 py-1 rounded ${log.health_score>=70?"bg-emerald-950 text-emerald-400":log.health_score>=40?"bg-amber-950 text-amber-400":"bg-red-950 text-red-400"}`}>{log.health_score || 0}%</span>
                 </div>
               </div>
             ))}
