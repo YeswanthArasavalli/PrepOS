@@ -132,8 +132,8 @@ export default function PlannerPage() {
             />
           </div>
           <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
-            <span>{dailyPlan.tasks.filter((t) => t.completed).length} completed</span>
-            <span>{dailyPlan.tasks.length} total tasks</span>
+            <span>{(dailyPlan?.tasks || []).filter((t: any) => t.completed).length} completed</span>
+            <span>{(dailyPlan?.tasks || []).length} total tasks</span>
           </div>
         </div>
       )}
@@ -188,7 +188,7 @@ export default function PlannerPage() {
             No tasks for today. Click "Regenerate" to create a plan.
           </div>
         ) : (
-          dailyPlan.tasks.map((task) => (
+          (dailyPlan?.tasks || []).map((task: any) => (
             <div
               key={task.id}
               className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
@@ -253,19 +253,19 @@ export default function PlannerPage() {
         <div className="grid grid-cols-3 gap-2">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
             <div className="text-lg font-semibold text-white">
-              {dailyPlan.tasks.filter((t) => t.type === "study").length}
+              {(dailyPlan?.tasks || []).filter((t: any) => t.type === "study").length}
             </div>
             <div className="text-[10px] text-slate-500 mt-0.5">Study</div>
           </div>
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
             <div className="text-lg font-semibold text-white">
-              {dailyPlan.tasks.filter((t) => t.type === "health").length}
+              {(dailyPlan?.tasks || []).filter((t: any) => t.type === "health").length}
             </div>
             <div className="text-[10px] text-slate-500 mt-0.5">Health</div>
           </div>
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
             <div className="text-lg font-semibold text-white">
-              {dailyPlan.tasks.filter((t) => t.type === "revision").length}
+              {(dailyPlan?.tasks || []).filter((t: any) => t.type === "revision").length}
             </div>
             <div className="text-[10px] text-slate-500 mt-0.5">Revision</div>
           </div>
