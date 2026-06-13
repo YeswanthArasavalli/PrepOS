@@ -28,11 +28,18 @@ export default function HealthPage() {
   const handleLog = () => {
     const logData: any = {
       log_date: format(new Date(), "yyyy-MM-dd"),
+      // Map new form fields to database schema
+      wake: form.wake_time >= "05:00" && form.wake_time <= "05:30" ? 1 : 0,
+      sleep: form.sleep_hours >= 7 ? 1 : 0,
+      water: Math.min(1, form.water_liters / 3),
+      steps: Math.min(1, form.steps / 10000),
+      exercise: form.exercise_minutes >= 30 ? 1 : 0,
+      strength: form.strength_minutes >= 20 ? 1 : 0,
+      // Also save detailed fields
       wake_time: form.wake_time,
       sleep_time: form.sleep_time,
       sleep_hours: form.sleep_hours,
       water_liters: form.water_liters,
-      steps: form.steps,
       exercise_minutes: form.exercise_minutes,
       strength_minutes: form.strength_minutes,
       mental_health_score: form.mental_health_score,
@@ -45,11 +52,18 @@ export default function HealthPage() {
   const handleUpdate = () => {
     if(!editingId) return;
     const logData: any = {
+      // Map new form fields to database schema
+      wake: form.wake_time >= "05:00" && form.wake_time <= "05:30" ? 1 : 0,
+      sleep: form.sleep_hours >= 7 ? 1 : 0,
+      water: Math.min(1, form.water_liters / 3),
+      steps: Math.min(1, form.steps / 10000),
+      exercise: form.exercise_minutes >= 30 ? 1 : 0,
+      strength: form.strength_minutes >= 20 ? 1 : 0,
+      // Also save detailed fields
       wake_time: form.wake_time,
       sleep_time: form.sleep_time,
       sleep_hours: form.sleep_hours,
       water_liters: form.water_liters,
-      steps: form.steps,
       exercise_minutes: form.exercise_minutes,
       strength_minutes: form.strength_minutes,
       mental_health_score: form.mental_health_score,
