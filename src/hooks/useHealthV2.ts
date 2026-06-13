@@ -65,18 +65,18 @@ export function useHealthV2() {
 
     // Daily (today)
     const today = new Date().toISOString().split("T")[0];
-    const todayLog = healthLogs.find(log => log.log_date === today);
+    const todayLog = (healthLogs || []).find(log => log.log_date === today);
     const daily = todayLog ? calcHealthV2(todayLog) : 0;
 
     // Weekly (last 7 days)
-    const weeklyLogs = healthLogs.slice(0, 7);
+    const weeklyLogs = (healthLogs || []).slice(0, 7);
     const weekly = weeklyLogs.length > 0
       ? Math.round(weeklyLogs.reduce((sum, log) => sum + calcHealthV2(log), 0) / weeklyLogs.length)
       : 0;
 
     // Monthly (last 30 days)
-    const monthly = healthLogs.length > 0
-      ? Math.round(healthLogs.reduce((sum, log) => sum + calcHealthV2(log), 0) / healthLogs.length)
+    const monthly = (healthLogs || []).length > 0
+      ? Math.round((healthLogs || []).reduce((sum, log) => sum + calcHealthV2(log), 0) / (healthLogs || []).length)
       : 0;
 
     // Readiness (weekly average)
@@ -84,7 +84,7 @@ export function useHealthV2() {
 
     // Components (weekly averages)
     const avgComponent = (key: keyof typeof weeklyLogs[0]) => {
-      const sum = weeklyLogs.reduce((acc, log) => acc + (log[key] as number || 0), 0);
+      const sum = (weeklyLogs || []).reduce((acc, log) => acc + (log[key] as number || 0), 0);
       return Math.round((sum / weeklyLogs.length) * 100);
     };
 

@@ -183,7 +183,7 @@ export function usePrepData() {
     enabled: !!uid, staleTime: 60 * 1000,
   });
 
-  const topicProgressMap = Object.fromEntries(topicProgressList.map(t => [t.topic_id, t]));
+  const topicProgressMap = Object.fromEntries((topicProgressList || []).map(t => [t.topic_id, t]));
 
   const updateTopicMutation = useMutation({
     mutationFn: async ({ topicId, subject, topicName, isDone, stage }: {
@@ -211,9 +211,9 @@ export function usePrepData() {
     enabled: !!uid, staleTime: 60 * 1000,
   });
 
-  const revisionMap = Object.fromEntries(revisionLogs.map(r => [r.topic_id, r]));
-  const overdueRevisions = revisionLogs.filter(r => new Date(r.due_at) < new Date());
-  const upcomingRevisions = revisionLogs.filter(r => {
+  const revisionMap = Object.fromEntries((revisionLogs || []).map(r => [r.topic_id, r]));
+  const overdueRevisions = (revisionLogs || []).filter(r => new Date(r.due_at) < new Date());
+  const upcomingRevisions = (revisionLogs || []).filter(r => {
     const due = new Date(r.due_at), now = new Date();
     return due >= now && (due.getTime() - now.getTime()) < 3 * 86400000;
   });
@@ -247,7 +247,7 @@ export function usePrepData() {
     enabled: !!uid,
   });
 
-  const occurredEventIds = new Set(eventsList.filter(e => e.occurred).map(e => e.event_id as EventId));
+  const occurredEventIds = new Set((eventsList || []).filter(e => e.occurred).map(e => e.event_id as EventId));
 
   const toggleEventMutation = useMutation({
     mutationFn: async (eventId: EventId) => {
@@ -279,8 +279,8 @@ export function usePrepData() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["week_logs", uid] });
-      const totalPlan  = weekLogs.reduce((s, w) => s + (w.plan_hours ?? 0), 0);
-      const totalStudy = weekLogs.reduce((s, w) => s + (w.study_hours ?? 0), 0);
+      const totalPlan  = (weekLogs || []).reduce((s, w) => s + (w.plan_hours ?? 0), 0);
+      const totalStudy = (weekLogs || []).reduce((s, w) => s + (w.study_hours ?? 0), 0);
       updateProfile({ total_plan_hours: totalPlan, total_study_hours: totalStudy });
     },
   });
@@ -315,7 +315,7 @@ export function usePrepData() {
     enabled: !!uid,
   });
 
-  const netUnitMap = Object.fromEntries(netUnitList.map(u => [u.unit_number, u.stage]));
+  const netUnitMap = Object.fromEntries((netUnitList || []).map(u => [u.unit_number, u.stage]));
 
   const updateNETUnitMutation = useMutation({
     mutationFn: async ({ unit, stage }: { unit: number; stage: 0 | 1 | 2 | 3 }) => {

@@ -101,13 +101,13 @@ export function usePriorities() {
     const now = new Date();
 
     // 1. Add overdue revisions (highest priority - 30% weight)
-    const overdueRevisions = revisionLog?.filter(r => new Date(r.due_at) < now) || [];
+    const overdueRevisions = (revisionLog || []).filter(r => new Date(r.due_at) < now) || [];
     overdueRevisions.slice(0, 2).forEach((rev, i) => {
       const overdueDays = Math.floor((now.getTime() - new Date(rev.due_at).getTime()) / 86400000);
       const revisionUrgency = Math.min(100, 50 + overdueDays * 10); // 50 base + 10 per overdue day
       
       // Calculate weakness from error logs
-      const errorCount = errorLogs?.filter(e => e.subject === rev.subject).length || 0;
+      const errorCount = (errorLogs || []).filter(e => e.subject === rev.subject).length || 0;
       const weaknessScore = Math.min(100, errorCount * 15); // 15 points per error
       
       // Exam priority based on profile

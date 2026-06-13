@@ -163,7 +163,7 @@ export function useWeeklyReview() {
       : { name: "N/A", score: 0 };
 
     // Most improved topic (recently completed)
-    const recentCompletions = topicProgress?.filter(t => 
+    const recentCompletions = (topicProgress || []).filter(t => 
       t.completed_at && new Date(t.completed_at) >= weekAgo
     ) || [];
     const mostImprovedTopic = recentCompletions.length > 0
@@ -171,7 +171,7 @@ export function useWeeklyReview() {
       : "None";
 
     // Most ignored topic (not studied this week)
-    const studiedTopicIds = new Set(topicProgress
+    const studiedTopicIds = new Set((topicProgress || [])
       ?.filter(t => t.last_studied && new Date(t.last_studied) >= weekAgo)
       .map(t => t.topic_id) || []);
     
@@ -182,7 +182,7 @@ export function useWeeklyReview() {
       : "None";
 
     // Revision debt
-    const revisionDebt = revisionLog?.filter(r => new Date(r.due_at) < now).length || 0;
+    const revisionDebt = (revisionLog || [])?.filter(r => new Date(r.due_at) < now).length || 0;
 
     // Next week focus (based on weak areas + upcoming mocks)
     const nextWeekFocus: string[] = [];

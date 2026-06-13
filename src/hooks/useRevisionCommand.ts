@@ -60,7 +60,7 @@ export function useRevisionCommand() {
     const today = now.toISOString().split("T")[0];
     const tomorrow = new Date(now.getTime() + 86400000).toISOString().split("T")[0];
 
-    const queue: RevisionItem[] = revisionLog.map(log => {
+    const queue: RevisionItem[] = (revisionLog || []).map(log => {
       const dueDate = new Date(log.due_at);
       const overdueDays = Math.floor((now.getTime() - dueDate.getTime()) / 86400000);
       const priority = calcRevisionPriority(overdueDays, 0);
@@ -91,7 +91,7 @@ export function useRevisionCommand() {
 
     // Calculate metrics
     const totalDebt = overdue.length;
-    const completedRevisions = revisionLog.reduce((sum, log) => sum + (log.revision_count || 0), 0);
+    const completedRevisions = (revisionLog || []).reduce((sum, log) => sum + (log.revision_count || 0), 0);
     const totalRevisionsNeeded = revisionLog.length * 5; // 5 revision cycles
     const revisionScore = Math.round((completedRevisions / Math.max(totalRevisionsNeeded, 1)) * 100);
 
@@ -114,7 +114,7 @@ export function useRevisionCommand() {
   // Mark revision complete
   const markRevisionCompleteMutation = useMutation({
     mutationFn: async ({ topicId, topicName, subject }: { topicId: string; topicName: string; subject: string }) => {
-      const existing = revisionLog?.find(log => log.topic_id === topicId);
+      const existing = (revisionLog || []).find(log => log.topic_id === topicId);
       const gaps = [1, 3, 7, 15, 30];
       const revCount = existing?.revision_count || 0;
       const nextDays = gaps[Math.min(revCount, gaps.length - 1)];

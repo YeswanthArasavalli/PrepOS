@@ -80,7 +80,7 @@ export function useResources() {
 
   const updateProgressMutation = useMutation({
     mutationFn: async ({ id, completed_chapters }: { id: string; completed_chapters: number }) => {
-      const resource = resources.find((r) => r.id === id);
+      const resource = (resources || []).find((r) => r.id === id);
       if (!resource) throw new Error("Resource not found");
 
       const status = completed_chapters >= resource.total_chapters

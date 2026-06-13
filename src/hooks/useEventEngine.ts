@@ -148,13 +148,13 @@ export function useEventEngine() {
     enabled: !!uid,
   });
 
-  const triggeredIds = new Set(triggeredEvents?.map(e => e.event_id) || []);
+  const triggeredIds = new Set((triggeredEvents || []).map(e => e.event_id) || []);
 
   // Merge definitions with triggered status
   const events = EVENT_DEFINITIONS.map(event => ({
     ...event,
     occurred: triggeredIds.has(event.event_id),
-    triggered_at: triggeredEvents?.find(e => e.event_id === event.event_id)?.occurred_at
+    triggered_at: (triggeredEvents || []).find(e => e.event_id === event.event_id)?.occurred_at
   }));
 
   // Trigger event mutation
@@ -181,7 +181,7 @@ export function useEventEngine() {
     
     activeEvents.forEach(event => {
       event.effects.forEach(effect => {
-        const existing = effects.find(e => e.exam === effect.exam);
+        const existing = effects?.find(e => e.exam === effect.exam);
         if (existing) {
           existing.totalDelta += effect.delta;
           existing.notes.push(effect.note);

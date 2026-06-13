@@ -82,7 +82,7 @@ export function useReadinessEngine() {
   }
 
   // Calculate readiness components (only in Prep Mode)
-  const doneTopics = topicProgress?.filter(t => t.is_done).length || 0;
+  const doneTopics = (topicProgress || [])?.filter(t => t.is_done).length || 0;
   const totalTopics = 89; // Total topics across all exams
   
   const syllabusPct = calcSyllabusCompletion(doneTopics, totalTopics);

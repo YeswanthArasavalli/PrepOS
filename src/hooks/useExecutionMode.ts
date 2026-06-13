@@ -57,7 +57,7 @@ export function useExecutionMode() {
     
     // Daily score (today)
     const today = new Date().toISOString().split("T")[0];
-    const todayLogs = studyLogs?.filter(log => log.log_date === today);
+    const todayLogs = (studyLogs || []).filter(log => log.log_date === today);
     const dailyStudyHours = todayLogs?.reduce((sum, log) => sum + (log.hours || 0), 0) || 0;
     const dailyScore = Math.min(100, Math.round((dailyStudyHours / 8) * 100));
     
